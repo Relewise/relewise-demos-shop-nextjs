@@ -1,0 +1,74 @@
+'use client'
+import { ClientContextStore } from "@/stores/clientContextStore";
+import { ProductResult, ProductsRecommendationCollectionBuilder, ProductsViewedAfterViewingProductBuilder, PurchasedWithProductBuilder, UserFactory } from "@relewise/client";
+import dynamic from "next/dynamic";
+import React, { useEffect } from "react";
+import ProductGrid from "./product/productGrid";
+
+interface ProductDetailsRecomendationsProps {
+    displayedAtLocation: string
+    productId: string
+}
+
+const Component = (props: ProductDetailsRecomendationsProps) => {
+
+    const contextStore = new ClientContextStore();
+    if (contextStore.getAppContext().datasets.length < 1) {
+        return (<> </>)
+    }
+
+    const [purchasedWithProduct, setPurchasedWithProduct] = React.useState<ProductResult[] | null | undefined>();
+    const [productsViewedAfterViewing, setProductsViewedAfterViewing] = React.useState<ProductResult[] | null | undefined>();
+
+    useEffect(() => {
+        const selectedDataset = contextStore.getSelectedDataset();
+        const puchasedWithProductBuilder = new PurchasedWithProductBuilder(
+            {
+                currency: selectedDataset.currencyCode,
+                language: selectedDataset.language,
+                user: UserFactory.anonymous(),
+                displayedAtLocation: props.displayedAtLocation
+            }
+        ).setSelectedProductProperties(contextStore.getProductSettings())
+            .setNumberOfRecommendations(5)
+            .product({ productId: props.productId });
+
+        const productsViewedAfterViewing = new ProductsViewedAfterViewingProductBuilder(
+            {
+                currency: selectedDataset.currencyCode,
+                language: selectedDataset.language,
+                user: UserFactory.anonymous(),
+                displayedAtLocation: props.displayedAtLocation
+            }
+        ).setSelectedProductProperties(contextStore.getProductSettings())
+            .setNumberOfRecommendations(5)
+            .product({ productId: props.productId });
+
+        const productRecommendationsBuilder = new ProductsRecommendationCollectionBuilder()
+            .addRequest(puchasedWithProductBuilder.build())
+            .addRequest(productsViewedAfterViewing.build());
+
+        contextStore.getRecomender()
+            .batchProductRecommendations(productRecommendationsBuilder.build())
+            .then((result) => {
+                if (result && result.responses) {
+                    setPurchasedWithProduct(result.responses[0].recommendations)
+                    setProductsViewedAfterViewing(result.responses[1].recommendations)
+                }
+            });
+    }, [])
+
+    return (
+        <>
+            <ProductGrid title="Purchased with" products={purchasedWithProduct ?? []} />
+            <ProductGrid title="Products viewed after viewing" products={productsViewedAfterViewing ?? []} />
+        </>
+
+    )
+}
+
+const ProductDetailsRecomendations = dynamic(() => Promise.resolve(Component), {
+    ssr: false,
+})
+
+export default ProductDetailsRecomendations
