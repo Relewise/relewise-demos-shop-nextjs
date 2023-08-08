@@ -1,7 +1,5 @@
-import { Searcher, SelectedProductPropertiesSettings } from "@relewise/client";
 import { cookies } from 'next/headers';
 import { AppContext } from "./appContext";
-import { Dataset } from "./dataset";
 import { ContextStore } from "./contextStore";
 
 export class ServerContextStore extends ContextStore {

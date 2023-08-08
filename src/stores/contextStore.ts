@@ -25,18 +25,22 @@ export abstract class ContextStore {
     }
 
     getDefaultSettings(): Settings {
-        const appContext = this.getAppContext();
-        if (appContext.datasets.length < 0) {
+        if (!this.isConfigured()) {
             throw new Error('Missing language or currencycode');
         }
-        const dataset = this.getSelectedDataset();
 
+        const dataset = this.getSelectedDataset();
         return {
             language: dataset.language,
             currency: dataset.currencyCode,
             displayedAtLocation: 'Relewise Demo Store',
             user: UserFactory.anonymous(),
         };
+    }
+
+    isConfigured(): boolean {
+        const appContext = this.getAppContext();
+        return appContext.datasets.length > 0;
     }
 
     saveDataset(dataset: Dataset) {
