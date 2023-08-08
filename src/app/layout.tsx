@@ -17,28 +17,24 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  let categories: CategoryHierarchyFacetResultCategoryNode[] = [];
+  let hasChildCategories: boolean = false;
 
   const appContext = new ServerContextStore();
-  const dataset = appContext.getSelectedDataset();
-  let categories: CategoryHierarchyFacetResultCategoryNode[] = [];
-
   if (appContext.isConfigured()) {
-    const builder = new ProductSearchBuilder({
-      currency: dataset.currencyCode,
-      language: dataset.language,
-      user: UserFactory.anonymous(),
-      displayedAtLocation: "relewise demo shop"
-    })
+    const builder = new ProductSearchBuilder(appContext.getDefaultSettings())
       .pagination(p => p.setPageSize(0))
-      .facets(f => f.addProductCategoryHierarchyFacet('ImmediateParent', null, { displayName: true, paths: true }))
+      .facets(f => f.addProductCategoryHierarchyFacet('ImmediateParent', null, { displayName: true }))
 
     const result = await appContext.getSearcher().searchProducts(builder.build())
 
-    if (result && result.facets && result.facets.items) {
+    if (result?.facets?.items) {
       const categoryFacetResult = result.facets.items[0] as CategoryHierarchyFacetResult;
       categories = categoryFacetResult.nodes
         .filter(node => node.category.displayName)
         .sort((a, b) => a.category.displayName?.localeCompare(b.category.displayName ?? "") ?? 0);
+
+      hasChildCategories = categories.filter(category => category.children && category.children.length > 0).length > 0
     }
   }
 
@@ -46,11 +42,11 @@ export default async function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <div id="app">
-          <Header categories={categories} />
+          <Header categories={categories} hasChildCategories={hasChildCategories} />
           <div id="main-container" className="container mx-auto pt-3 pb-10 flex-grow">
             {children}
           </div>
-          <Footer />
+          <Footer categories={categories} hasChildCategories={hasChildCategories} />
         </div>
       </body>
     </html>
