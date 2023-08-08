@@ -10,14 +10,6 @@ export class ServerContextStore extends ContextStore {
         cookies().set("shopContext", JSON.stringify(appContext))
     }
 
-    getSelectedDataset(): Dataset {
-        const appContext = this.getAppContext();
-        if (appContext.datasets.length < 1) {
-            return new Dataset();
-        }
-        return appContext.datasets[appContext.selectedDatasetIndex];
-    }
-
     getAppContext(): AppContext {
         const cookiesStore = cookies()
         const cookie = cookiesStore.get("shopContext")?.value

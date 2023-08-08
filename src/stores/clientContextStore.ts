@@ -5,14 +5,6 @@ import { Dataset } from "./dataset";
 import { ContextStore } from "./contextStore";
 
 export class ClientContextStore extends ContextStore {
-    getSelectedDataset(): Dataset {
-        const appContext = this.getAppContext();
-        if (appContext.datasets.length < 1) {
-            return new Dataset();
-        }
-        return appContext.datasets[appContext.selectedDatasetIndex];
-    }
-
     getAppContext(): AppContext {
         const cookie = getCookie("shopContext")?.toString();
 

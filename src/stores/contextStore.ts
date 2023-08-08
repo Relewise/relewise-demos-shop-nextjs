@@ -3,9 +3,16 @@ import { Dataset } from "./dataset";
 import { AppContext } from "./appContext";
 
 export abstract class ContextStore {
-    abstract getSelectedDataset(): Dataset;
     abstract getAppContext(): AppContext;
     abstract setAppContext(appContext: AppContext): void;
+
+    getSelectedDataset(): Dataset {
+        const appContext = this.getAppContext();
+        if (appContext.datasets.length < 1) {
+            return new Dataset();
+        }
+        return appContext.datasets[appContext.selectedDatasetIndex];
+    }
 
     getProductSettings(): SelectedProductPropertiesSettings {
         return {
@@ -23,7 +30,7 @@ export abstract class ContextStore {
             throw new Error('Missing language or currencycode');
         }
         const dataset = this.getSelectedDataset();
-        
+
         return {
             language: dataset.language,
             currency: dataset.currencyCode,
