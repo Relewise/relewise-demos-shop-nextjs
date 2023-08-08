@@ -4,11 +4,8 @@ import { PopularProductsBuilder, ProductResult, UserFactory } from "@relewise/cl
 import dynamic from "next/dynamic";
 import React, { useEffect } from "react";
 import ProductTile from "./product/productTile";
-interface PopularProductsProps {
-    displayedAtLocation: string
-}
 
-const Component = (props: PopularProductsProps) => {
+const Component = () => {
 
     const contextStore = new ClientContextStore();
     if (contextStore.getAppContext().datasets.length < 1) {
@@ -18,15 +15,8 @@ const Component = (props: PopularProductsProps) => {
     const [popularProducts, setPopularProducts] = React.useState<ProductResult[] | null | undefined>();
 
     useEffect(() => {
-        const selectedDataset = contextStore.getSelectedDataset();
-        const builder = new PopularProductsBuilder(
-            {
-                currency: selectedDataset.currencyCode,
-                language: selectedDataset.language,
-                user: UserFactory.anonymous(),
-                displayedAtLocation: props.displayedAtLocation
-            }
-        ).setSelectedProductProperties(contextStore.getProductSettings());
+        const builder = new PopularProductsBuilder(contextStore.getDefaultSettings())
+            .setSelectedProductProperties(contextStore.getProductSettings());
 
         contextStore.getRecomender()
             .recommendPopularProducts(builder.build())

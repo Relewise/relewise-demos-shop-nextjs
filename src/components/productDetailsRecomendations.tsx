@@ -6,7 +6,6 @@ import React, { useEffect } from "react";
 import ProductGrid from "./product/productGrid";
 
 interface ProductDetailsRecomendationsProps {
-    displayedAtLocation: string
     productId: string
 }
 
@@ -21,26 +20,13 @@ const Component = (props: ProductDetailsRecomendationsProps) => {
     const [productsViewedAfterViewing, setProductsViewedAfterViewing] = React.useState<ProductResult[] | null | undefined>();
 
     useEffect(() => {
-        const selectedDataset = contextStore.getSelectedDataset();
-        const puchasedWithProductBuilder = new PurchasedWithProductBuilder(
-            {
-                currency: selectedDataset.currencyCode,
-                language: selectedDataset.language,
-                user: UserFactory.anonymous(),
-                displayedAtLocation: props.displayedAtLocation
-            }
-        ).setSelectedProductProperties(contextStore.getProductSettings())
+        const puchasedWithProductBuilder = new PurchasedWithProductBuilder(contextStore.getDefaultSettings())
+            .setSelectedProductProperties(contextStore.getProductSettings())
             .setNumberOfRecommendations(5)
             .product({ productId: props.productId });
 
-        const productsViewedAfterViewing = new ProductsViewedAfterViewingProductBuilder(
-            {
-                currency: selectedDataset.currencyCode,
-                language: selectedDataset.language,
-                user: UserFactory.anonymous(),
-                displayedAtLocation: props.displayedAtLocation
-            }
-        ).setSelectedProductProperties(contextStore.getProductSettings())
+        const productsViewedAfterViewing = new ProductsViewedAfterViewingProductBuilder(contextStore.getDefaultSettings())
+            .setSelectedProductProperties(contextStore.getProductSettings())
             .setNumberOfRecommendations(5)
             .product({ productId: props.productId });
 

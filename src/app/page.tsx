@@ -19,8 +19,8 @@ export default function Home() {
           </p>
         </div>
       </div>
-      <PopularProducts displayedAtLocation="front page" />
-      <PopularBrands displayedAtLocation="front page" />
+      <PopularProducts />
+      <PopularBrands />
     </main>
   )
 }

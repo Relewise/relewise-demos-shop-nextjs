@@ -5,11 +5,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import React, { useEffect } from "react";
 
-interface PopularBrandsProps {
-    displayedAtLocation: string
-}
-
-const Component = (props: PopularBrandsProps) => {
+const Component = () => {
 
     const contextStore = new ClientContextStore();
     if (contextStore.getAppContext().datasets.length < 1) {
@@ -19,17 +15,7 @@ const Component = (props: PopularBrandsProps) => {
     const [popularBrands, setPopularBrands] = React.useState<BrandResult[] | null | undefined>();
 
     useEffect(() => {
-        const selectedDataset = contextStore.getSelectedDataset();
-
-        const builder = new PopularBrandsRecommendationBuilder(
-            {
-                currency: selectedDataset.currencyCode,
-                language: selectedDataset.language,
-                user: UserFactory.anonymous(),
-                displayedAtLocation: props.displayedAtLocation
-            }
-        )
-
+        const builder = new PopularBrandsRecommendationBuilder(contextStore.getDefaultSettings())
         contextStore.getRecomender()
             .recommendPopularBrands(builder.build())
             .then((result) => {

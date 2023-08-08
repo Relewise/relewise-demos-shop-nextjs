@@ -1,4 +1,4 @@
-import { Recommender, Searcher, SelectedProductPropertiesSettings } from "@relewise/client";
+import { Recommender, Searcher, SelectedProductPropertiesSettings, Settings, UserFactory } from "@relewise/client";
 import { Dataset } from "./dataset";
 import { AppContext } from "./appContext";
 
@@ -15,6 +15,21 @@ export abstract class ContextStore {
             categoryPaths: true,
             pricing: true,
         } as SelectedProductPropertiesSettings
+    }
+
+    getDefaultSettings(): Settings {
+        const appContext = this.getAppContext();
+        if (appContext.datasets.length < 0) {
+            throw new Error('Missing language or currencycode');
+        }
+        const dataset = this.getSelectedDataset();
+        
+        return {
+            language: dataset.language,
+            currency: dataset.currencyCode,
+            displayedAtLocation: 'Relewise Demo Store',
+            user: UserFactory.anonymous(),
+        };
     }
 
     saveDataset(dataset: Dataset) {

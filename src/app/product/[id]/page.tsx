@@ -1,19 +1,11 @@
 import ProductImage from "@/components/product/productImage";
 import ProductDetailsRecomendations from "@/components/productDetailsRecomendations";
 import { ServerContextStore } from "@/stores/serverContextStore";
-import { ProductSearchBuilder, UserFactory } from "@relewise/client";
+import { ProductSearchBuilder } from "@relewise/client";
 
 export default async function Product({ params }: { params: { id: string } }) {
-
   const contextStore = new ServerContextStore();
-  const dataset = contextStore.getSelectedDataset();
-
-  const builder = new ProductSearchBuilder({
-    language: dataset.language,
-    currency: dataset.currencyCode,
-    displayedAtLocation: "product page",
-    user: UserFactory.anonymous()
-  })
+  const builder = new ProductSearchBuilder(contextStore.getDefaultSettings())
     .setSelectedProductProperties(contextStore.getProductSettings())
     .filters(fileter => fileter.addProductIdFilter([params.id]))
 
@@ -59,7 +51,7 @@ export default async function Product({ params }: { params: { id: string } }) {
         </div>
       }
 
-      <ProductDetailsRecomendations displayedAtLocation="product page" productId={params.id} />
+      <ProductDetailsRecomendations productId={params.id} />
     </div >
   )
 }
