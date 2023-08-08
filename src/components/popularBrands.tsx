@@ -12,7 +12,7 @@ const Component = () => {
     const [popularBrands, setPopularBrands] = React.useState<BrandResult[] | null | undefined>();
 
     useEffect(() => {
-        if (contextStore.getAppContext().datasets.length < 1) {
+        if (!contextStore.isConfigured()) {
             return
         }
 
@@ -24,7 +24,7 @@ const Component = () => {
             });
     }, [])
 
-    if (contextStore.getAppContext().datasets.length < 1) {
+    if (!contextStore.isConfigured()) {
         return (<></>)
     }
 
