@@ -8,20 +8,25 @@ import React, { useEffect } from "react";
 const Component = () => {
 
     const contextStore = new ClientContextStore();
-    if (contextStore.getAppContext().datasets.length < 1) {
-        return (<></>)
-    }
 
     const [popularBrands, setPopularBrands] = React.useState<BrandResult[] | null | undefined>();
 
     useEffect(() => {
+        if (contextStore.getAppContext().datasets.length < 1) {
+            return
+        }
+
         const builder = new PopularBrandsRecommendationBuilder(contextStore.getDefaultSettings())
         contextStore.getRecomender()
             .recommendPopularBrands(builder.build())
             .then((result) => {
                 setPopularBrands(result?.recommendations);
             });
-    }, [])
+    })
+
+    if (contextStore.getAppContext().datasets.length < 1) {
+        return (<></>)
+    }
 
     return (
         <>
