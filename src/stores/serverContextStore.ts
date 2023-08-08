@@ -2,8 +2,13 @@ import { Searcher, SelectedProductPropertiesSettings } from "@relewise/client";
 import { cookies } from 'next/headers';
 import { AppContext } from "./appContext";
 import { Dataset } from "./dataset";
+import { ContextStore } from "./contextStore";
 
-export class ServerContextStore {
+export class ServerContextStore extends ContextStore {
+
+    setAppContext(appContext: AppContext): void {
+        cookies().set("shopContext", JSON.stringify(appContext))
+    }
 
     getSelectedDataset(): Dataset {
         const appContext = this.getAppContext();
@@ -13,7 +18,7 @@ export class ServerContextStore {
         return appContext.datasets[appContext.selectedDatasetIndex];
     }
 
-    private getAppContext(): AppContext {
+    getAppContext(): AppContext {
         const cookiesStore = cookies()
         const cookie = cookiesStore.get("shopContext")?.value
 
@@ -25,22 +30,6 @@ export class ServerContextStore {
         const newAppContext = new AppContext(0, []);
 
         return newAppContext;
-    }
-
-    getSearcher(): Searcher {
-        const selectedDataset = this.getSelectedDataset();
-
-        return new Searcher(selectedDataset.datasetId, selectedDataset.apiKey, { serverUrl: selectedDataset.serverUrl });
-    }
-
-    getProductSettings(): SelectedProductPropertiesSettings {
-        return {
-            displayName: true,
-            allData: true,
-            brand: true,
-            categoryPaths: true,
-            pricing: true,
-        } as SelectedProductPropertiesSettings
     }
 }
 
