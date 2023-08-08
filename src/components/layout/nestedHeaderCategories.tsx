@@ -38,7 +38,7 @@ const Component = (props: NestedHeaderCategoriesProps) => {
                 </ul >
             </div>
 
-            {(hoveredCategory && hoveredCategory.children && hoveredCategory.children.length > 0) &&
+            {(hoveredCategory?.children && hoveredCategory.children.length > 0) &&
                 <div className="absolute z-10 w-full" onMouseEnter={() => onMouseEnter(hoveredCategory)} onMouseLeave={onMouseLeave}>
                     <div className=" bg-white">
                         <div className="container mx-auto">

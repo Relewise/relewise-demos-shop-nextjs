@@ -6,14 +6,10 @@ import NestedHeaderCategories from './nestedHeaderCategories';
 
 interface HeaderProps {
     categories: CategoryHierarchyFacetResultCategoryNode[]
+    hasChildCategories: boolean
 }
 
 export default function Header(props: HeaderProps) {
-
-    const hasChildCategories = () => {
-        return props.categories.filter(category => category.children && category.children.length > 0).length > 0
-    }
-
     return (
         <header className="bg-white shadow-sm">
             <div className="container mx-auto">
@@ -41,7 +37,7 @@ export default function Header(props: HeaderProps) {
                 </div>
 
             </div >
-            {hasChildCategories() ?
+            {props.hasChildCategories ?
                 <NestedHeaderCategories categories={props.categories} />
                 :
                 <FlatHeaderCategories categories={props.categories} />

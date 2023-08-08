@@ -43,32 +43,6 @@ export abstract class ContextStore {
         return appContext.datasets.length > 0;
     }
 
-    saveDataset(dataset: Dataset) {
-        const appContext = this.getAppContext();
-        appContext.datasets[appContext.selectedDatasetIndex] = dataset;
-        this.setAppContext(new AppContext(appContext.selectedDatasetIndex, appContext.datasets));
-    }
-
-    addEmptyDataset() {
-        const appContext = this.getAppContext();
-        const newDataset = new Dataset();
-        appContext.datasets.push(newDataset);
-
-        this.setAppContext(new AppContext(appContext.datasets.length - 1, appContext.datasets));
-    }
-
-    setSelectedDatasetIndex(index: number) {
-        const appContext = this.getAppContext();
-        this.setAppContext(new AppContext(index, appContext.datasets));
-    }
-
-    deleteSelectedDataset() {
-        const appContext = this.getAppContext();
-        appContext.datasets.splice(appContext.selectedDatasetIndex, 1);
-
-        this.setAppContext(new AppContext(0, appContext.datasets));
-    }
-
     getRecomender(): Recommender {
         const selectedDataset = this.getSelectedDataset();
 
