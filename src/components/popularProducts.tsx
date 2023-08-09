@@ -1,5 +1,5 @@
 'use client'
-import { ClientContextStore } from "@/stores/clientContextStore";
+import { ContextStore } from "@/stores/clientContextStore";
 import { PopularProductsBuilder, ProductResult, UserFactory } from "@relewise/client";
 import dynamic from "next/dynamic";
 import React, { useEffect } from "react";
@@ -7,7 +7,7 @@ import ProductTile from "./product/productTile";
 
 const Component = () => {
 
-    const contextStore = new ClientContextStore();
+    const contextStore = new ContextStore();
 
     const [popularProducts, setPopularProducts] = React.useState<ProductResult[] | null | undefined>();
 

@@ -1,11 +1,11 @@
 'use client'
-import { ClientContextStore } from "@/stores/clientContextStore";
+import { ContextStore } from "@/stores/clientContextStore";
 import { Dataset } from "@/stores/dataset";
 import dynamic from "next/dynamic";
 import React from "react";
 
 const Component = () => {
-    const contextStore = new ClientContextStore();
+    const contextStore = new ContextStore();
 
     const [saved, setSaved] = React.useState(false);
     const [dataset, setDataset] = React.useState<Dataset>(contextStore.getSelectedDataset());

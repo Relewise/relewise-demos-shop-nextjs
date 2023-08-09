@@ -1,5 +1,5 @@
 'use client'
-import { ClientContextStore } from "@/stores/clientContextStore";
+import { ContextStore } from "@/stores/clientContextStore";
 import { ProductResult, ProductsRecommendationCollectionBuilder, ProductsViewedAfterViewingProductBuilder, PurchasedWithProductBuilder, UserFactory } from "@relewise/client";
 import dynamic from "next/dynamic";
 import React, { useEffect } from "react";
@@ -11,7 +11,7 @@ interface ProductDetailsRecomendationsProps {
 
 const Component = (props: ProductDetailsRecomendationsProps) => {
 
-    const contextStore = new ClientContextStore();
+    const contextStore = new ContextStore();
 
     const [purchasedWithProduct, setPurchasedWithProduct] = React.useState<ProductResult[] | null | undefined>();
     const [productsViewedAfterViewing, setProductsViewedAfterViewing] = React.useState<ProductResult[] | null | undefined>();

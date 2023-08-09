@@ -1,7 +1,5 @@
 import Footer from '@/components/layout/footer'
 import Header from '@/components/layout/header'
-import { ClientContextStore } from '@/stores/clientContextStore'
-import { CategoryHierarchyFacetResult, CategoryHierarchyFacetResultCategoryNode, ProductSearchBuilder } from '@relewise/client'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
@@ -12,7 +10,7 @@ export const metadata: Metadata = {
   title: 'Relewise Demo Shop'
 }
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode

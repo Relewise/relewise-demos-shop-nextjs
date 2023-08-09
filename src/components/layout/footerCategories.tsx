@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import FlatFooterCategories from "./flatFooterCategories";
 import NestedFooterCategories from "./nestedFooterCategories";
-import { ClientContextStore } from "@/stores/clientContextStore";
+import { ContextStore } from "@/stores/clientContextStore";
 
 
 const Component = () => {
@@ -14,7 +14,7 @@ const Component = () => {
     const hasChildCategories = (): boolean => {
         return categories.filter(category => category.children && category.children.length > 0).length > 0
     }
-    const contextStore = new ClientContextStore();
+    const contextStore = new ContextStore();
     useEffect(() => {
         getCategories(contextStore).then(result => setCategories(result))
     }, [])

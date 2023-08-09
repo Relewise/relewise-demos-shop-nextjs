@@ -1,7 +1,7 @@
-import { ClientContextStore } from "@/stores/clientContextStore";
+import { ContextStore } from "@/stores/clientContextStore";
 import { CategoryHierarchyFacetResult, CategoryHierarchyFacetResultCategoryNode, ProductSearchBuilder } from "@relewise/client";
 
-export async function getCategories(appContext: ClientContextStore): Promise<CategoryHierarchyFacetResultCategoryNode[]> {
+export async function getCategories(appContext: ContextStore): Promise<CategoryHierarchyFacetResultCategoryNode[]> {
 
     if (!appContext.isConfigured()) {
         return [];
