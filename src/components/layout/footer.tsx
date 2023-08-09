@@ -1,21 +1,11 @@
-import { CategoryHierarchyFacetResultCategoryNode } from "@relewise/client";
 import Image from "next/image";
-import NestedFooterCategories from "./nestedFooterCategories";
-import FlatFooterCategories from "./flatFooterCategories";
+import FooterCategories from "./footerCategories";
 
-interface FooterProps {
-    categories: CategoryHierarchyFacetResultCategoryNode[]
-    hasChildCategories: boolean
-}
-
-export default function Footer(props: FooterProps) {
+export default function Footer() {
     return (
         <footer className="bg-white">
             <div className="container px-6 py-12 mx-auto">
-                {props.hasChildCategories ?
-                    <NestedFooterCategories categories={props.categories.slice(0, 4)} /> :
-                    <FlatFooterCategories categories={props.categories} />}
-
+                <FooterCategories />
                 <hr className="my-6 border-zinc-200 md:my-5" />
                 <div className="flex flex-col items-center justify-between sm:flex-row">
                     <a href="https://relewise.com/contact-us/">

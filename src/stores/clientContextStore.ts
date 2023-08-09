@@ -1,9 +1,8 @@
-import { Recommender, Searcher, SelectedProductPropertiesSettings } from "@relewise/client";
 import { getCookie, setCookie } from "cookies-next";
-import { AppContext } from "./appContext";
-import { Dataset } from "./dataset";
-import { ContextStore } from "./contextStore";
 import { useRouter } from "next/navigation";
+import { AppContext } from "./appContext";
+import { ContextStore } from "./contextStore";
+import { Dataset } from "./dataset";
 
 export class ClientContextStore extends ContextStore {
     router = useRouter();

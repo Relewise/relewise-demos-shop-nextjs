@@ -1,15 +1,8 @@
 import { ShoppingBagIcon } from '@heroicons/react/24/outline';
-import { CategoryHierarchyFacetResultCategoryNode } from "@relewise/client";
 import Link from "next/link";
-import FlatHeaderCategories from "./flatHeaderCategories";
-import NestedHeaderCategories from './nestedHeaderCategories';
+import HeaderCategories from './headerCategories';
 
-interface HeaderProps {
-    categories: CategoryHierarchyFacetResultCategoryNode[]
-    hasChildCategories: boolean
-}
-
-export default function Header(props: HeaderProps) {
+export default function Header() {
     return (
         <header className="bg-white shadow-sm">
             <div className="container mx-auto">
@@ -37,13 +30,7 @@ export default function Header(props: HeaderProps) {
                 </div>
 
             </div >
-            {props.hasChildCategories ?
-                <NestedHeaderCategories categories={props.categories} />
-                :
-                <FlatHeaderCategories categories={props.categories} />
-            }
-
-
+            <HeaderCategories />
         </header >
     );
 }

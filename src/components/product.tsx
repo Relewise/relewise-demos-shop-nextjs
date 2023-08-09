@@ -15,7 +15,7 @@ const Component = (props: ProductProps) => {
     const [product, setProduct] = React.useState<ProductResult | undefined>();
 
     useEffect(() => {
-        if (contextStore.getAppContext().datasets.length < 1) {
+        if (!contextStore.isConfigured()) {
             return
         }
 
