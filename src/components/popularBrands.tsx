@@ -22,7 +22,7 @@ const Component = () => {
             .then((result) => {
                 setPopularBrands(result?.recommendations);
             });
-    })
+    }, [])
 
     if (contextStore.getAppContext().datasets.length < 1) {
         return (<></>)

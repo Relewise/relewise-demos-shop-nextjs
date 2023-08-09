@@ -24,7 +24,7 @@ const Component = () => {
             .then((result) => {
                 setPopularProducts(result?.recommendations);
             });
-    })
+    }, [])
 
     if (contextStore.getAppContext().datasets.length < 1) {
         return (<></>)

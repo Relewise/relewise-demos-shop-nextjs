@@ -42,7 +42,7 @@ const Component = (props: ProductDetailsRecomendationsProps) => {
                     setProductsViewedAfterViewing(result.responses[1].recommendations)
                 }
             });
-    })
+    }, [])
 
     if (contextStore.getAppContext().datasets.length < 1) {
         return (<> </>)
