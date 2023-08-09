@@ -20,8 +20,8 @@ const Component = (props: NestedHeaderCategoriesProps) => {
             <div className="container mx-auto">
                 <ul className="flex gap-2">
                     <ul className="flex scrollable-element">
-                        {props.categories.map(category =>
-                            <div onMouseEnter={() => onMouseEnter(category)} onMouseLeave={onMouseLeave}>
+                        {props.categories.map((category, index) =>
+                            <div key={index} onMouseEnter={() => onMouseEnter(category)} onMouseLeave={onMouseLeave}>
                                 <li className="inline-flex relative pr-5">
                                     <Link href={`/category/${category.category.categoryId}`} className="font-semibold uppercase py-3 leading-none text-lg text-zinc-700 whitespace-nowrap hover:text-blue-500 transitions ease-in-out delay-150 cursor-pointer">
                                         {category.category.displayName}
@@ -44,8 +44,8 @@ const Component = (props: NestedHeaderCategoriesProps) => {
                         <div className="container mx-auto">
                             <div className="overflow-x-auto">
                                 <ul className="text-base z-10 max-h-96 list-none grid grid-cols-4 p-2">
-                                    {hoveredCategory.children.map(child => (
-                                        <Link href={`/category/${hoveredCategory.category.categoryId}/${child.category.categoryId}`} className="text-gray-700 block px-2 py-1 rounded cursor-pointer hover:bg-gray-100">
+                                    {hoveredCategory.children.map((child, index) => (
+                                        <Link key={index} href={`/category/${hoveredCategory.category.categoryId}/${child.category.categoryId}`} className="text-gray-700 block px-2 py-1 rounded cursor-pointer hover:bg-gray-100">
                                             {child.category.displayName}
                                         </Link>
                                     ))}
