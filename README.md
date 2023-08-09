@@ -1,4 +1,4 @@
-# Relewise Demo Shop Vue
+# Relewise Demo Shop Nextjs
 
 This is the Relewise demo shop featuring Search & Recommendations built on top of the JavaScript SDK. The Demo is built using [Next.js](https://nextjs.org/).
 
