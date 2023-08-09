@@ -17,7 +17,7 @@ const Component = (props: ProductDetailsRecomendationsProps) => {
     const [productsViewedAfterViewing, setProductsViewedAfterViewing] = React.useState<ProductResult[] | null | undefined>();
 
     useEffect(() => {
-        if (contextStore.getAppContext().datasets.length < 1) {
+        if (!contextStore.isConfigured()) {
             return;
         }
         const puchasedWithProductBuilder = new PurchasedWithProductBuilder(contextStore.getDefaultSettings())
@@ -44,7 +44,7 @@ const Component = (props: ProductDetailsRecomendationsProps) => {
             });
     }, [])
 
-    if (contextStore.getAppContext().datasets.length < 1) {
+    if (!contextStore.isConfigured()) {
         return (<> </>)
     }
 

@@ -1,5 +1,6 @@
-import Link from "next/link"
-import { ShoppingBagIcon, Cog6ToothIcon } from '@heroicons/react/24/outline';
+import { ShoppingBagIcon } from '@heroicons/react/24/outline';
+import Link from "next/link";
+import HeaderCategories from './headerCategories';
 
 export default function Header() {
     return (
@@ -27,18 +28,9 @@ export default function Header() {
                         </Link>
                     </div>
                 </div>
-                <nav className="hidden lg:block">
-                    <ul className="flex w-full gap-2">
-                        <li className="flex-grow"></li>
-                        <li className="inline-flex items-center">
-                            <Link href="/app-settings"
-                                className="text-zinc-600 inline-flex items-center whitespace-nowrap py-2 hover:text-black">
-                                <Cog6ToothIcon className="w-5 h-5 mr-1" /> Configure Demo
-                            </Link>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-        </header>
+
+            </div >
+            <HeaderCategories />
+        </header >
     );
 }
