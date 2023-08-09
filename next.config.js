@@ -3,7 +3,8 @@ const nextConfig = {
     images: {
         domains: ['relewise.com'],
       },
-      basePath: '/relewise-demos-shop-nextjs'
+      basePath: '/relewise-demos-shop-nextjs',
+      output: 'export'
 }
 
 module.exports = nextConfig
