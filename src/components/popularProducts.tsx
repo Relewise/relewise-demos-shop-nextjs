@@ -8,13 +8,14 @@ import ProductTile from "./product/productTile";
 const Component = () => {
 
     const contextStore = new ClientContextStore();
-    if (contextStore.getAppContext().datasets.length < 1) {
-        return (<></>)
-    }
 
     const [popularProducts, setPopularProducts] = React.useState<ProductResult[] | null | undefined>();
 
     useEffect(() => {
+        if (contextStore.getAppContext().datasets.length < 1) {
+            return;
+        }
+
         const builder = new PopularProductsBuilder(contextStore.getDefaultSettings())
             .setSelectedProductProperties(contextStore.getProductSettings());
 
@@ -23,7 +24,11 @@ const Component = () => {
             .then((result) => {
                 setPopularProducts(result?.recommendations);
             });
-    }, [])
+    })
+
+    if (contextStore.getAppContext().datasets.length < 1) {
+        return (<></>)
+    }
 
     return (
         <>

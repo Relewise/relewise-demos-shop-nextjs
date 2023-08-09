@@ -12,14 +12,14 @@ interface ProductDetailsRecomendationsProps {
 const Component = (props: ProductDetailsRecomendationsProps) => {
 
     const contextStore = new ClientContextStore();
-    if (contextStore.getAppContext().datasets.length < 1) {
-        return (<> </>)
-    }
 
     const [purchasedWithProduct, setPurchasedWithProduct] = React.useState<ProductResult[] | null | undefined>();
     const [productsViewedAfterViewing, setProductsViewedAfterViewing] = React.useState<ProductResult[] | null | undefined>();
 
     useEffect(() => {
+        if (contextStore.getAppContext().datasets.length < 1) {
+            return;
+        }
         const puchasedWithProductBuilder = new PurchasedWithProductBuilder(contextStore.getDefaultSettings())
             .setSelectedProductProperties(contextStore.getProductSettings())
             .setNumberOfRecommendations(5)
@@ -42,7 +42,11 @@ const Component = (props: ProductDetailsRecomendationsProps) => {
                     setProductsViewedAfterViewing(result.responses[1].recommendations)
                 }
             });
-    }, [])
+    })
+
+    if (contextStore.getAppContext().datasets.length < 1) {
+        return (<> </>)
+    }
 
     return (
         <>

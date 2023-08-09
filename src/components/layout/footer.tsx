@@ -1,3 +1,4 @@
+import Image from "next/image";
 
 export default function Footer() {
     return (
@@ -7,7 +8,7 @@ export default function Footer() {
 
             <div className="flex flex-col items-center justify-between sm:flex-row">
                 <a href="https://relewise.com/contact-us/">
-                    <img src="https://relewise.com/wp-content/uploads/2022/09/hdr_logo.png" className="h-14" />
+                    <Image alt="relewise logo" src="https://relewise.com/wp-content/uploads/2022/09/hdr_logo.png" className="h-14" width={56} height={56}/>
                 </a>
 
                 <p className="mt-4 text-sm text-zinc-500 sm:mt-0">

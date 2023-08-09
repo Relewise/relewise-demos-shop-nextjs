@@ -1,5 +1,6 @@
 import { PhotoIcon } from "@heroicons/react/24/outline"
 import { DataValue, ProductResult } from "@relewise/client"
+import Image from "next/image";
 
 interface ProductImageProps {
     product: ProductResult
@@ -34,7 +35,7 @@ export default function ProductImage(props: ProductImageProps) {
     return (
         <>
             {image() ?
-                <img className="object-cover" src={image()} alt="product image" /> :
+                <Image unoptimized className="object-cover h-full w-full" src={image()} alt="product image" width={0} height={0} /> :
                 <PhotoIcon className="h-full w-full text-zinc-300" />}
         </>
 
