@@ -3,9 +3,9 @@ name: CI
 on: pull_request
 
 jobs:
-  build_vue:
+  build_nextjs:
     runs-on: ubuntu-latest
-    name: Build Vue
+    name: Build Nextjs
     steps:
       - uses: actions/checkout@v3
 
