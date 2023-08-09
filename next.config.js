@@ -4,7 +4,7 @@ const nextConfig = {
         domains: ['relewise.com'],
       },
       basePath: '/relewise-demos-shop-nextjs',
-      output: 'export'
+      output: 'standalone'
 }
 
 module.exports = nextConfig
