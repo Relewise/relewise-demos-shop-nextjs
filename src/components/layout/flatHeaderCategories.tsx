@@ -41,8 +41,8 @@ const Component = (props: FlatHeaderCategoriesProps) => {
                         <div className="container mx-auto">
                             <div className="overflow-x-auto">
                                 <ul className="text-base z-10 max-h-96 list-none grid grid-cols-4 p-2">
-                                    {props.categories.map(category => (
-                                        <Link href={`/category/${category.category.categoryId}`} className="text-gray-700 block px-2 py-1 rounded cursor-pointer hover:bg-gray-100">
+                                    {props.categories.map((category, index) => (
+                                        <Link key={index} href={`/category/${category.category.categoryId}`} className="text-gray-700 block px-2 py-1 rounded cursor-pointer hover:bg-gray-100">
                                             {category.category.displayName}
                                         </Link>
                                     ))}
