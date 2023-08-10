@@ -1,10 +1,10 @@
 'use client'
 import { ContextStore } from "@/stores/clientContextStore";
 import { Sort } from "@/stores/sort";
-import { CategoryResult, PriceRangeFacetResult, ProductCategorySearchBuilder, ProductSearchBuilder, ProductSearchResponse } from "@relewise/client";
+import { CategoryResult, ProductCategorySearchBuilder, ProductSearchBuilder, ProductSearchResponse } from "@relewise/client";
 import dynamic from "next/dynamic";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import Facets from "./facets";
 import Pagination from "./pagination";
 import ProductTile from "./product/productTile";
@@ -21,12 +21,14 @@ const Component = (props: CategoryProps) => {
     const currentSort = searchParams.get('Sort') as Sort ?? Sort.Recommended
     const currentSelectedBrands = searchParams.get('Brand')?.split(",")
     const currentSelectedCategories = searchParams.get('Category')?.split(",")
+    const currentSelectedMinPrice = searchParams.get('minPrice')
+    const currentSelectedMaxPrice = searchParams.get('maxPrice')
 
     const [category, setCategory] = useState<CategoryResult | undefined>()
     const [products, setProducts] = useState<ProductSearchResponse | undefined>()
     const [selectedFacets, setSelectedFacets] = useState<Record<string, string[]>>({ Category: currentSelectedCategories ?? [], Brand: currentSelectedBrands ?? [] })
-    const [minPrice, setMinPrice] = useState<number | undefined>()
-    const [maxPrice, setMaxPrice] = useState<number | undefined>()
+    const [minPrice, setMinPrice] = useState<number | undefined>(currentSelectedMinPrice ? +currentSelectedMinPrice : undefined)
+    const [maxPrice, setMaxPrice] = useState<number | undefined>(currentSelectedMaxPrice ? +currentSelectedMaxPrice : undefined)
 
     const [sort, setSort] = useState<Sort>(currentSort)
     const [page, setPage] = useState(1)
@@ -67,14 +69,6 @@ const Component = (props: CategoryProps) => {
     function onSortChange(e: ChangeEvent<HTMLSelectElement>) {
         const sortBy = e.target.value as Sort;
         setSort(sortBy)
-    }
-
-    function onMinPriceChange(price: number) {
-        setMinPrice(price);
-    }
-
-    function onMaxPriceChange(price: number) {
-        setMaxPrice(price);
     }
 
     function getFacetsByType(type: string) {
@@ -156,6 +150,7 @@ const Component = (props: CategoryProps) => {
                         .then(response => {
                             setProducts(response)
                             setCategory(categoryResult)
+                            setPage(1)
                         }
                         );
                 }
