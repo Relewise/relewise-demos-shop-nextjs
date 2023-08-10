@@ -23,6 +23,11 @@ button {
 
 input[type="text"] {
   @apply block w-full rounded-md border border-zinc-100 py-2.5 px-4 bg-zinc-100 shadow-sm focus:border-zinc-300 focus:ring-1 focus:ring-zinc-200 focus:outline-none;
+
+  &.small {
+      @apply py-1.5 px-2;
+  }
+
 }
 
 a {

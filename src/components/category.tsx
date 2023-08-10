@@ -1,7 +1,7 @@
 'use client'
 import { ContextStore } from "@/stores/clientContextStore";
 import { Sort } from "@/stores/sort";
-import { CategoryResult, ProductCategorySearchBuilder, ProductSearchBuilder, ProductSearchResponse } from "@relewise/client";
+import { CategoryResult, PriceRangeFacetResult, ProductCategorySearchBuilder, ProductSearchBuilder, ProductSearchResponse } from "@relewise/client";
 import dynamic from "next/dynamic";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
@@ -25,6 +25,8 @@ const Component = (props: CategoryProps) => {
     const [category, setCategory] = useState<CategoryResult | undefined>()
     const [products, setProducts] = useState<ProductSearchResponse | undefined>()
     const [selectedFacets, setSelectedFacets] = useState<Record<string, string[]>>({ Category: currentSelectedCategories ?? [], Brand: currentSelectedBrands ?? [] })
+    const [minPrice, setMinPrice] = useState<number | undefined>()
+    const [maxPrice, setMaxPrice] = useState<number | undefined>()
 
     const [sort, setSort] = useState<Sort>(currentSort)
     const [page, setPage] = useState(1)
@@ -43,6 +45,15 @@ const Component = (props: CategoryProps) => {
             params.set("Brand", brandFacets.toString())
         }
 
+        if(minPrice) {
+            params.set("minPrice", minPrice.toString())
+        }
+
+        
+        if(maxPrice) {
+            params.set("maxPrice", maxPrice.toString())
+        }
+
         params.set("Sort", sort)
 
         router.push(pathname + "?" + params.toString())
@@ -56,6 +67,14 @@ const Component = (props: CategoryProps) => {
     function onSortChange(e: ChangeEvent<HTMLSelectElement>) {
         const sortBy = e.target.value as Sort;
         setSort(sortBy)
+    }
+
+    function onMinPriceChange(price: number) {
+        setMinPrice(price);
+    }
+
+    function onMaxPriceChange(price: number) {
+        setMaxPrice(price);
     }
 
     function getFacetsByType(type: string) {
@@ -110,7 +129,7 @@ const Component = (props: CategoryProps) => {
                         .facets(f => f
                             .addCategoryFacet('ImmediateParent', getFacetsByType("Category"))
                             .addBrandFacet(getFacetsByType("Brand"))
-                            .addSalesPriceRangeFacet('Product', undefined),
+                            .addSalesPriceRangeFacet('Product', minPrice, maxPrice),
                         )
                         .pagination(p => p.setPageSize(40).setPage(page))
                         .sorting(s => {
@@ -141,14 +160,14 @@ const Component = (props: CategoryProps) => {
                         );
                 }
             })
-    }, [page, sort, selectedFacets])
+    }, [page, sort, selectedFacets, minPrice, maxPrice])
 
     return (
         <div className="search">
             <div className="flex gap-3">
                 <div className="w-1/5">
                     {products?.facets &&
-                        <Facets facets={products?.facets} setFacet={setFacet} />
+                        <Facets facets={products?.facets} setFacet={setFacet} minPrice={minPrice} maxPrice={maxPrice} setMinPrice={setMinPrice} setMaxPrice={setMaxPrice}/>
                     }
                 </div>
                 <div className="w-4/5">
