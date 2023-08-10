@@ -1,6 +1,6 @@
 'use client'
 import ProductImage from "@/components/product/productImage";
-import { ClientContextStore } from "@/stores/clientContextStore";
+import { ContextStore } from "@/stores/clientContextStore";
 import { ProductResult, ProductSearchBuilder } from "@relewise/client";
 import dynamic from "next/dynamic";
 import React, { useEffect } from "react";
@@ -10,12 +10,12 @@ interface ProductProps {
 }
 
 const Component = (props: ProductProps) => {
-    const contextStore = new ClientContextStore();
+    const contextStore = new ContextStore();
 
     const [product, setProduct] = React.useState<ProductResult | undefined>();
 
     useEffect(() => {
-        if (contextStore.getAppContext().datasets.length < 1) {
+        if (!contextStore.isConfigured()) {
             return
         }
 

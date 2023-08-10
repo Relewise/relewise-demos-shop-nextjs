@@ -1,5 +1,5 @@
 'use client'
-import { ClientContextStore } from "@/stores/clientContextStore";
+import { ContextStore } from "@/stores/clientContextStore";
 import { BrandResult, PopularBrandsRecommendationBuilder, UserFactory } from "@relewise/client";
 import dynamic from "next/dynamic";
 import Link from "next/link";
@@ -7,12 +7,12 @@ import React, { useEffect } from "react";
 
 const Component = () => {
 
-    const contextStore = new ClientContextStore();
+    const contextStore = new ContextStore();
 
     const [popularBrands, setPopularBrands] = React.useState<BrandResult[] | null | undefined>();
 
     useEffect(() => {
-        if (contextStore.getAppContext().datasets.length < 1) {
+        if (!contextStore.isConfigured()) {
             return
         }
 
@@ -24,7 +24,7 @@ const Component = () => {
             });
     }, [])
 
-    if (contextStore.getAppContext().datasets.length < 1) {
+    if (!contextStore.isConfigured()) {
         return (<></>)
     }
 
