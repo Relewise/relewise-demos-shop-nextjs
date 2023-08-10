@@ -18,25 +18,35 @@ const Component = (props: CategoryProps) => {
     const router = useRouter()
     const pathname = usePathname()
     const searchParams = useSearchParams()
-    const currentSort = searchParams.get('sort') as Sort ?? Sort.Recommended
+    const currentSort = searchParams.get('Sort') as Sort ?? Sort.Recommended
+    const currentSelectedBrands = searchParams.get('Brand')?.split(",")
+    const currentSelectedCategories = searchParams.get('Category')?.split(",")
 
     const [category, setCategory] = useState<CategoryResult | undefined>()
     const [products, setProducts] = useState<ProductSearchResponse | undefined>()
-    const [selectedFacets, setSelectedFacets] = useState<Record<string, string[]>>({ Category: [], Brand: [] })
+    const [selectedFacets, setSelectedFacets] = useState<Record<string, string[]>>({ Category: currentSelectedCategories ?? [], Brand: currentSelectedBrands ?? [] })
 
     const [sort, setSort] = useState<Sort>(currentSort)
     const [page, setPage] = useState(1)
     const pageSize = 40;
 
-    const createQueryString = useCallback(
-        (name: string, value: string) => {
-            const params = new URLSearchParams(Array.from(searchParams.entries()));
-            params.set(name, value)
-            return params.toString()
-        },
-        [searchParams]
-    )
+    const setQueryString = () => {
+        const params = new URLSearchParams();
+        const categoryFacets = getFacetsByType("Category")
+        const brandFacets = getFacetsByType("Brand")
 
+        if (categoryFacets && categoryFacets.length > 0) {
+            params.set("Category", categoryFacets.toString())
+        }
+
+        if (brandFacets && brandFacets.length > 0) {
+            params.set("Brand", brandFacets.toString())
+        }
+
+        params.set("Sort", sort)
+
+        router.push(pathname + "?" + params.toString())
+    }
 
     function goToPage(page: number) {
         setPage(page);
@@ -45,8 +55,6 @@ const Component = (props: CategoryProps) => {
 
     function onSortChange(e: ChangeEvent<HTMLSelectElement>) {
         const sortBy = e.target.value as Sort;
-
-        router.push(pathname + "?" + createQueryString("sort", sortBy))
         setSort(sortBy)
     }
 
@@ -75,11 +83,11 @@ const Component = (props: CategoryProps) => {
     }
 
     useEffect(() => {
-        console.log("called use effect", selectedFacets)
         if (contextStore.getAppContext().datasets.length < 1) {
             return;
         }
 
+        setQueryString();
         const searcher = contextStore.getSearcher();
 
         const productCategorySearchBuilder = new ProductCategorySearchBuilder(contextStore.getDefaultSettings())
