@@ -7,6 +7,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import Pagination from "./pagination";
 import ProductTile from "./product/productTile";
+import Facets from "./facets";
 
 interface CategoryProps {
     categoryIds: string[]
@@ -22,6 +23,8 @@ const Component = (props: CategoryProps) => {
 
     const [category, setCategory] = useState<CategoryResult | undefined>()
     const [products, setProducts] = useState<ProductSearchResponse | undefined>()
+    const [selectedFacets, setSelectedFacets] = useState<Record<string, string[]>>({ Category: [], Brand: [] })
+
     const [sort, setSort] = useState<Sort>(currentSort)
     const [page, setPage] = useState(1)
     const pageSize = 40;
@@ -48,7 +51,32 @@ const Component = (props: CategoryProps) => {
         setSort(sortBy)
     }
 
+    function getFacetsByType(type: string) {
+        if (!selectedFacets[type] || selectedFacets[type].length < 1) {
+            return null;
+        }
+        return selectedFacets[type]
+    }
+
+    function setFacet(type: string, value: string) {
+        const currentSelectFacetValues = getFacetsByType(type)
+        const valueAlreadySelected = (currentSelectFacetValues?.find(v => v === value)?.length ?? 0) > 0
+
+        if (valueAlreadySelected) {
+            const newSelectFacets = { ...selectedFacets }
+            const indexToRemove = newSelectFacets[type].indexOf(value)
+            newSelectFacets[type].splice(indexToRemove, 1)
+            setSelectedFacets(newSelectFacets)
+            return;
+        }
+
+        const newSelectFacets = { ...selectedFacets }
+        newSelectFacets[type].push(value)
+        setSelectedFacets(newSelectFacets)
+    }
+
     useEffect(() => {
+        console.log("called use effect", selectedFacets)
         if (contextStore.getAppContext().datasets.length < 1) {
             return;
         }
@@ -73,8 +101,8 @@ const Component = (props: CategoryProps) => {
                             f.addProductCategoryIdFilter('Ancestor', [categoryResult?.categoryId ?? ""]);
                         })
                         .facets(f => f
-                            .addCategoryFacet('ImmediateParent', null)
-                            .addBrandFacet(null)
+                            .addCategoryFacet('ImmediateParent', getFacetsByType("Category"))
+                            .addBrandFacet(getFacetsByType("Brand"))
                             .addSalesPriceRangeFacet('Product', undefined),
                         )
                         .pagination(p => p.setPageSize(40).setPage(page))
@@ -96,8 +124,7 @@ const Component = (props: CategoryProps) => {
                                     break;
                                 }
                             }
-                        })
-                        ;
+                        });
 
                     contextStore.getSearcher().searchProducts(productSearchBuild.build())
                         .then(response => {
@@ -107,17 +134,15 @@ const Component = (props: CategoryProps) => {
                         );
                 }
             })
-
-
-    }, [page, sort])
+    }, [page, sort, selectedFacets])
 
     return (
         <div className="search">
             <div className="flex gap-3">
                 <div className="w-1/5">
-                    {/* {category?.facets &&
-                        <Facets facets={productCategorySearchResponse?.facets} />
-                    } */}
+                    {products?.facets &&
+                        <Facets facets={products?.facets} setFacet={setFacet} />
+                    }
                 </div>
                 <div className="w-4/5">
                     {products?.results &&
