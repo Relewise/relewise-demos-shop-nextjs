@@ -16,8 +16,13 @@ const Component = (props: CategoryProps) => {
 
     const [category, setCategory] = useState<CategoryResult | undefined>()
     const [products, setProducts] = useState<ProductSearchResponse | undefined>()
-    const [page, setPage] = useState(2)
+    const [page, setPage] = useState(1)
     const pageSize = 40;
+
+    function goToPage(page: number) {
+        setPage(page);
+        window.scrollTo(0, 0);
+    }
 
     useEffect(() => {
         if (contextStore.getAppContext().datasets.length < 1) {
@@ -61,7 +66,7 @@ const Component = (props: CategoryProps) => {
             })
 
 
-    }, [])
+    }, [page])
 
     return (
         <div className="search">
@@ -100,7 +105,7 @@ const Component = (props: CategoryProps) => {
                                 ))}
                             </div>
                             <div className="py-3 flex justify-center">
-                                <Pagination currentPage={page} total={products.hits} pageSize={pageSize} />
+                                <Pagination currentPage={page} total={products.hits} pageSize={pageSize} goToPage={goToPage} />
                             </div>
                         </div>
                     }
