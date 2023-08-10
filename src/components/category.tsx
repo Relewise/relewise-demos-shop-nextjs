@@ -1,10 +1,12 @@
 'use client'
 import { ClientContextStore } from "@/stores/clientContextStore";
+import { Sort } from "@/stores/sort";
 import { CategoryResult, ProductCategorySearchBuilder, ProductSearchBuilder, ProductSearchResponse } from "@relewise/client";
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
-import ProductTile from "./product/productTile";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import Pagination from "./pagination";
+import ProductTile from "./product/productTile";
 
 interface CategoryProps {
     categoryIds: string[]
@@ -13,27 +15,49 @@ interface CategoryProps {
 const Component = (props: CategoryProps) => {
 
     const contextStore = new ClientContextStore();
+    const router = useRouter()
+    const pathname = usePathname()
+    const searchParams = useSearchParams()
+    const currentSort = searchParams.get('sort') as Sort ?? Sort.Recommended
 
     const [category, setCategory] = useState<CategoryResult | undefined>()
     const [products, setProducts] = useState<ProductSearchResponse | undefined>()
+    const [sort, setSort] = useState<Sort>(currentSort)
     const [page, setPage] = useState(1)
     const pageSize = 40;
+
+    const createQueryString = useCallback(
+        (name: string, value: string) => {
+            const params = new URLSearchParams(Array.from(searchParams.entries()));
+            params.set(name, value)
+            return params.toString()
+        },
+        [searchParams]
+    )
+
 
     function goToPage(page: number) {
         setPage(page);
         window.scrollTo(0, 0);
     }
 
+    function onSortChange(e: ChangeEvent<HTMLSelectElement>) {
+        const sortBy = e.target.value as Sort;
+
+        router.push(pathname + "?" + createQueryString("sort", sortBy))
+        setSort(sortBy)
+    }
+
     useEffect(() => {
         if (contextStore.getAppContext().datasets.length < 1) {
             return;
         }
+
         const searcher = contextStore.getSearcher();
 
         const productCategorySearchBuilder = new ProductCategorySearchBuilder(contextStore.getDefaultSettings())
             .setSelectedCategoryProperties({ displayName: true })
             .filters(f => f.addProductCategoryIdFilter('ImmediateParentOrItsParent', [props.categoryIds[props.categoryIds.length - 1]]));
-
 
         searcher
             .searchProductCategories(productCategorySearchBuilder.build())
@@ -53,7 +77,27 @@ const Component = (props: CategoryProps) => {
                             .addBrandFacet(null)
                             .addSalesPriceRangeFacet('Product', undefined),
                         )
-                        .pagination(p => p.setPageSize(40).setPage(page));
+                        .pagination(p => p.setPageSize(40).setPage(page))
+                        .sorting(s => {
+                            switch (sort) {
+                                case "Popular": {
+                                    s.sortByProductPopularity();
+                                    break;
+                                }
+                                case "SalesPriceAsc": {
+                                    s.sortByProductAttribute("SalesPrice", "Ascending")
+                                    break;
+                                }
+                                case "SalesPriceDesc": {
+                                    s.sortByProductAttribute("SalesPrice", "Descending")
+                                    break;
+                                }
+                                default: {
+                                    break;
+                                }
+                            }
+                        })
+                        ;
 
                     contextStore.getSearcher().searchProducts(productSearchBuild.build())
                         .then(response => {
@@ -61,12 +105,11 @@ const Component = (props: CategoryProps) => {
                             setCategory(categoryResult)
                         }
                         );
-
                 }
             })
 
 
-    }, [page])
+    }, [page, sort])
 
     return (
         <div className="search">
@@ -88,13 +131,13 @@ const Component = (props: CategoryProps) => {
                                 }
                                 <div className="flex-grow">
                                 </div>
-                                <select className="w-1/6" >
-                                    <option>Recommended</option>
-                                    <option>Popular</option>
-                                    <option value="SalesPriceDesc">
+                                <select value={sort} onChange={onSortChange} className="w-1/6" >
+                                    <option>{Sort.Recommended}</option>
+                                    <option>{Sort.Popular}</option>
+                                    <option value={Sort.SalesPriceDesc}>
                                         Sales Price desc
                                     </option>
-                                    <option value="SalesPriceAsc">
+                                    <option value={Sort.SalesPriceAsc}>
                                         Sales Price asc
                                     </option>
                                 </select>
