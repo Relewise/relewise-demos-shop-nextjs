@@ -1,21 +1,20 @@
 'use client'
-import { ClientContextStore } from "@/stores/clientContextStore";
+import { ContextStore } from "@/stores/clientContextStore";
 import { Sort } from "@/stores/sort";
 import { CategoryResult, ProductCategorySearchBuilder, ProductSearchBuilder, ProductSearchResponse } from "@relewise/client";
 import dynamic from "next/dynamic";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import Facets from "./facets";
 import Pagination from "./pagination";
 import ProductTile from "./product/productTile";
-import Facets from "./facets";
 
 interface CategoryProps {
     categoryIds: string[]
 }
 
 const Component = (props: CategoryProps) => {
-
-    const contextStore = new ClientContextStore();
+    const contextStore = new ContextStore();
     const router = useRouter()
     const pathname = usePathname()
     const searchParams = useSearchParams()
