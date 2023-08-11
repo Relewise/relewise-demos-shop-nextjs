@@ -20,10 +20,13 @@ const Component = (props: CheckListFacetsProps) => {
     };
 
     return (
-
-        <div>
-            {(props.facet.field == "Category" || props.facet.field == "Brand") &&
-                <ul>
+        <>
+            {((props.facet.field == "Category" || props.facet.field == "Brand") && options().length > 0)&&
+                <div key="index" className="px-3 py-3 bg-white rounded mb-3">
+                    <div className="font-semibold text-lg mb-2">
+                        {props.facet.field}
+                    </div>
+                    <ul>
                         {options().slice(0, elementsToShow).map((option, index) =>
                             <li key={index} className="flex pb-1.5">
                                 {(option.value && typeof option.value === 'object' && 'id' in option.value) &&
@@ -40,10 +43,13 @@ const Component = (props: CheckListFacetsProps) => {
                                 Show all
                             </button>
                         }
-                </ul>
+                    </ul>
+                </div>
+
+
 
             }
-        </div >
+        </ >
 
     )
 }

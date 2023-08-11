@@ -19,17 +19,17 @@ const Component = (props: FacetsProps) => {
         <div>
             {props.facets.items?.map((facet, index) =>
                 <div key={index}>
-                    <div key="index" className="px-3 py-3 bg-white rounded mb-3">
-                        <div className="font-semibold text-lg mb-2">
-                            {facet.field}
-                        </div>
-                        {(facet.field == "Category" || "Brand") &&
-                            <CheckListFacet facet={facet} setFacet={props.setFacet} />
-                        }
-                        {(facet.field == "SalesPrice") &&
-                            <PriceRangeFacet facet={facet as PriceRangeFacetResult} maxPrice={props.maxPrice} minPrice={props.minPrice} setMaxPrice={props.setMaxPrice} setMinPrice={props.setMinPrice} />
-                        }
-                    </div>
+                    {(facet.field == "Category" || "Brand") &&
+                        <CheckListFacet facet={facet} setFacet={props.setFacet} />
+                    }
+                    {(facet.field == "SalesPrice") &&
+                        <PriceRangeFacet
+                            facet={facet as PriceRangeFacetResult}
+                            maxPrice={props.maxPrice}
+                            minPrice={props.minPrice}
+                            setMaxPrice={props.setMaxPrice}
+                            setMinPrice={props.setMinPrice} />
+                    }
                 </div>
             )
             }

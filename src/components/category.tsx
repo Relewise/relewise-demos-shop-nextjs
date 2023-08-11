@@ -15,14 +15,14 @@ interface CategoryProps {
 
 const Component = (props: CategoryProps) => {
     const contextStore = new ContextStore();
-    const router = useRouter()
-    const pathname = usePathname()
+    const router = useRouter();
+    const pathname = usePathname();
     const searchParams = useSearchParams()
-    const currentSort = searchParams.get('Sort') as Sort ?? Sort.Recommended
-    const currentSelectedBrands = searchParams.get('Brand')?.split(",")
-    const currentSelectedCategories = searchParams.get('Category')?.split(",")
-    const currentSelectedMinPrice = searchParams.get('minPrice')
-    const currentSelectedMaxPrice = searchParams.get('maxPrice')
+    const currentSort = searchParams.get('Sort') as Sort ?? Sort.Recommended;
+    const currentSelectedBrands = searchParams.get('Brand')?.split(",");
+    const currentSelectedCategories = searchParams.get('Category')?.split(",");
+    const currentSelectedMinPrice = searchParams.get('minPrice');
+    const currentSelectedMaxPrice = searchParams.get('maxPrice');
 
     const [category, setCategory] = useState<CategoryResult | undefined>()
     const [products, setProducts] = useState<ProductSearchResponse | undefined>()
@@ -106,7 +106,7 @@ const Component = (props: CategoryProps) => {
         searcher
             .searchProductCategories(productCategorySearchBuilder.build())
             .then(response => {
-              
+
                 if (response?.results) {
                     setCategory(response?.results[0])
                 }

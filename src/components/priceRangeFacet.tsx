@@ -14,26 +14,26 @@ interface PriceRangeFacetProps {
 
 const Component = (props: PriceRangeFacetProps) => {
 
-    const lowerBound = () => {
-        return props.facet.available?.value?.lowerBoundInclusive ?? 0
+    if (!props.facet.available?.value ||
+        !props.facet.available.value.lowerBoundInclusive ||
+        !props.facet.available.value.upperBoundInclusive) {
+        return (<></>)
     }
 
-    const upperBound = () => {
-        return props.facet.available?.value?.upperBoundInclusive ?? 10000
-    }
+    const lowerBound = props.facet.available.value.lowerBoundInclusive;
+    const upperBound = props.facet.available.value.upperBoundInclusive;
 
     const actualMinPrice = () => {
-
         if (!props.minPrice) {
-            return lowerBound();
+            return lowerBound;
         }
 
-        if (props.minPrice < lowerBound() || props.minPrice > upperBound()) {
-            return lowerBound();
+        if (props.minPrice < lowerBound || props.minPrice > upperBound) {
+            return lowerBound;
         }
 
         if (props.maxPrice && props.minPrice > props.maxPrice) {
-            return lowerBound();
+            return lowerBound;
         }
 
         return props.minPrice;
@@ -41,48 +41,64 @@ const Component = (props: PriceRangeFacetProps) => {
 
     const actualMaxPrice = () => {
         if (!props.maxPrice) {
-            return upperBound();
+            return upperBound;
         }
 
-        if (props.maxPrice < lowerBound() || props.maxPrice > upperBound()) {
-            return upperBound();
+        if (props.maxPrice < lowerBound || props.maxPrice > upperBound) {
+            return upperBound;
         }
 
         if (props.minPrice && props.minPrice > props.maxPrice) {
-            return upperBound();
+            return upperBound;
         }
 
         return props.maxPrice;
     }
 
     return (
-        <div>
-            <div className="w-full flex items-center justify-between mb-5 gap-2">
-                <input value={actualMinPrice()} type="text" className="small" onChange={(e) => { props.setMinPrice(+e.target.value) }} /> -
-                <input value={actualMaxPrice()} type="text" className="small" onChange={(e) => { props.setMaxPrice(+e.target.value) }} />
+        <>
+            <div className="px-3 py-3 bg-white rounded mb-3">
+                <div className="font-semibold text-lg mb-2">
+                    {props.facet.field}
+                </div>
+                <div>
+                    <div className="w-full flex items-center justify-between mb-5 gap-2">
+                        <input
+                            value={actualMinPrice()}
+                            type="text"
+                            className="small"
+                            onChange={(e) => { props.setMinPrice(+e.target.value) }}
+                        /> -
+                        <input
+                            value={actualMaxPrice()}
+                            type="text"
+                            className="small"
+                            onChange={(e) => { props.setMaxPrice(+e.target.value) }}
+                        />
+                    </div>
+                    <RangeSlider step={1} min={lowerBound} max={upperBound}
+                        options={{
+                            leftInputProps: {
+                                value: actualMinPrice(),
+                                onChange: (e) => {
+                                    if (Number(e.target.value) < actualMaxPrice()) {
+                                        props.setMinPrice(Number(e.target.value))
+                                    }
+                                },
+                            },
+                            rightInputProps: {
+                                value: actualMaxPrice(),
+                                onChange: (e) => {
+                                    if (Number(e.target.value) > actualMinPrice()) {
+                                        props.setMaxPrice(Number(e.target.value))
+                                    }
+                                },
+                            },
+                        }}
+                    />
+                </div >
             </div>
-            <RangeSlider step={1} min={lowerBound()} max={upperBound()}
-                options={{
-                    leftInputProps: {
-                        value: actualMinPrice(),
-                        onChange: (e) => {
-                            if (Number(e.target.value) < actualMaxPrice()) {
-                                props.setMinPrice(Number(e.target.value))
-                            }
-                        },
-                    },
-                    rightInputProps: {
-                        value: actualMaxPrice(),
-                        onChange: (e) => {
-                            if (Number(e.target.value) > actualMinPrice()) {
-                                props.setMaxPrice(Number(e.target.value))
-                            }
-                        },
-                    },
-                }}
-            />
-        </div >
-
+        </>
     )
 }
 
