@@ -20,6 +20,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <div id="app">
           <Header />
+          <div id="search"></div>
           <div
             id="main-container"
             className="container mx-auto pt-3 pb-10 flex-grow"
