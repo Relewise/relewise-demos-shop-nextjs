@@ -47,17 +47,15 @@ const Component = (props: CategoryProps) => {
             params.set("Brand", brandFacets.toString())
         }
 
-        if(minPrice) {
+        if (minPrice) {
             params.set("minPrice", minPrice.toString())
         }
 
-        
-        if(maxPrice) {
+        if (maxPrice) {
             params.set("maxPrice", maxPrice.toString())
         }
 
         params.set("Sort", sort)
-
         router.push(pathname + "?" + params.toString())
     }
 
@@ -96,13 +94,11 @@ const Component = (props: CategoryProps) => {
     }
 
     useEffect(() => {
-        if (contextStore.getAppContext().datasets.length < 1) {
+        if (!contextStore.isConfigured()) {
             return;
         }
 
-        setQueryString();
         const searcher = contextStore.getSearcher();
-
         const productCategorySearchBuilder = new ProductCategorySearchBuilder(contextStore.getDefaultSettings())
             .setSelectedCategoryProperties({ displayName: true })
             .filters(f => f.addProductCategoryIdFilter('ImmediateParentOrItsParent', [props.categoryIds[props.categoryIds.length - 1]]));
@@ -110,51 +106,58 @@ const Component = (props: CategoryProps) => {
         searcher
             .searchProductCategories(productCategorySearchBuilder.build())
             .then(response => {
+              
                 if (response?.results) {
-                    const categoryResult = response?.results[0];
-
-                    const productSearchBuild = new ProductSearchBuilder(contextStore.getDefaultSettings())
-                        .setSelectedProductProperties(contextStore.getProductSettings())
-                        .setSelectedVariantProperties({ allData: true })
-                        .setExplodedVariants(1)
-                        .filters(f => {
-                            f.addProductCategoryIdFilter('Ancestor', [categoryResult?.categoryId ?? ""]);
-                        })
-                        .facets(f => f
-                            .addCategoryFacet('ImmediateParent', getFacetsByType("Category"))
-                            .addBrandFacet(getFacetsByType("Brand"))
-                            .addSalesPriceRangeFacet('Product', minPrice, maxPrice),
-                        )
-                        .pagination(p => p.setPageSize(40).setPage(page))
-                        .sorting(s => {
-                            switch (sort) {
-                                case "Popular": {
-                                    s.sortByProductPopularity();
-                                    break;
-                                }
-                                case "SalesPriceAsc": {
-                                    s.sortByProductAttribute("SalesPrice", "Ascending")
-                                    break;
-                                }
-                                case "SalesPriceDesc": {
-                                    s.sortByProductAttribute("SalesPrice", "Descending")
-                                    break;
-                                }
-                                default: {
-                                    break;
-                                }
-                            }
-                        });
-
-                    contextStore.getSearcher().searchProducts(productSearchBuild.build())
-                        .then(response => {
-                            setProducts(response)
-                            setCategory(categoryResult)
-                            setPage(1)
-                        }
-                        );
+                    setCategory(response?.results[0])
                 }
             })
+    }, [])
+
+    useEffect(() => {
+        if (!contextStore.isConfigured()) {
+            return;
+        }
+
+        setQueryString();
+        const productSearchBuild = new ProductSearchBuilder(contextStore.getDefaultSettings())
+            .setSelectedProductProperties(contextStore.getProductSettings())
+            .setSelectedVariantProperties({ allData: true })
+            .setExplodedVariants(1)
+            .filters(f => {
+                f.addProductCategoryIdFilter('Ancestor', [props.categoryIds[props.categoryIds.length - 1]]);
+            })
+            .facets(f => f
+                .addCategoryFacet('ImmediateParent', getFacetsByType("Category"))
+                .addBrandFacet(getFacetsByType("Brand"))
+                .addSalesPriceRangeFacet('Product', minPrice, maxPrice),
+            )
+            .pagination(p => p.setPageSize(40).setPage(page))
+            .sorting(s => {
+                switch (sort) {
+                    case "Popular": {
+                        s.sortByProductPopularity();
+                        break;
+                    }
+                    case "SalesPriceAsc": {
+                        s.sortByProductAttribute("SalesPrice", "Ascending")
+                        break;
+                    }
+                    case "SalesPriceDesc": {
+                        s.sortByProductAttribute("SalesPrice", "Descending")
+                        break;
+                    }
+                    default: {
+                        break;
+                    }
+                }
+            });
+
+        contextStore.getSearcher().searchProducts(productSearchBuild.build())
+            .then(response => {
+                setProducts(response)
+                setPage(1)
+            }
+            );
     }, [page, sort, selectedFacets, minPrice, maxPrice])
 
     return (
@@ -162,7 +165,7 @@ const Component = (props: CategoryProps) => {
             <div className="flex gap-3">
                 <div className="w-1/5">
                     {products?.facets &&
-                        <Facets facets={products?.facets} setFacet={setFacet} minPrice={minPrice} maxPrice={maxPrice} setMinPrice={setMinPrice} setMaxPrice={setMaxPrice}/>
+                        <Facets facets={products?.facets} setFacet={setFacet} minPrice={minPrice} maxPrice={maxPrice} setMinPrice={setMinPrice} setMaxPrice={setMaxPrice} />
                     }
                 </div>
                 <div className="w-4/5">
