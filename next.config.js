@@ -4,7 +4,6 @@ const nextConfig = {
     unoptimized: true,
     domains: ['relewise.com'],
   },
-  basePath: '/relewise-demos-shop-nextjs',
   output: 'export'
 }
 
