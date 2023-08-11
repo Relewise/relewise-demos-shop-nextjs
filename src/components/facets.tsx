@@ -1,9 +1,9 @@
 'use client'
-import { ProductFacetResult } from "@relewise/client";
-import { RangeSlider } from "next-range-slider";
+import { PriceRangeFacetResult, ProductFacetResult } from "@relewise/client";
 import 'next-range-slider/dist/main.css';
 import dynamic from "next/dynamic";
 import CheckListFacet from "./checkListFacet";
+import PriceRangeFacet from "./priceRangeFacet";
 
 interface FacetsProps {
     facets: ProductFacetResult
@@ -27,28 +27,7 @@ const Component = (props: FacetsProps) => {
                             <CheckListFacet facet={facet} setFacet={props.setFacet} />
                         }
                         {(facet.field == "SalesPrice") &&
-                            <>
-                                {('available' in facet && facet.available && 'value' in facet.available) &&
-                                    <>
-                                        <div className="w-full flex items-center justify-between mb-5 gap-2">
-                                            <input value={props.minPrice ?? facet.available?.value?.lowerBoundInclusive ?? 0} type="text" className="small" onChange={(e) => props.setMinPrice(+e.target.value)} /> -
-                                            <input value={props.maxPrice ?? facet.available?.value?.upperBoundInclusive ?? 10000} type="text" className="small" onChange={(e) => props.setMaxPrice(+e.target.value)} />
-                                        </div>
-                                        <RangeSlider step={1} min={facet.available?.value?.lowerBoundInclusive ?? 0} max={facet.available?.value?.upperBoundInclusive ?? 10000}
-                                            options={{
-                                                leftInputProps: {
-                                                    value: props.minPrice ?? facet.available?.value?.lowerBoundInclusive ?? 0,
-                                                    onChange: (e) => props.setMinPrice(Number(e.target.value)),
-                                                },
-                                                rightInputProps: {
-                                                    value: props.maxPrice ?? facet.available?.value?.upperBoundInclusive ?? 10000,
-                                                    onChange: (e) => props.setMaxPrice(Number(e.target.value)),
-                                                },
-                                            }}
-                                        />
-                                    </>
-                                }
-                            </>
+                            <PriceRangeFacet facet={facet as PriceRangeFacetResult} maxPrice={props.maxPrice} minPrice={props.minPrice} setMaxPrice={props.setMaxPrice} setMinPrice={props.setMinPrice} />
                         }
                     </div>
                 </div>
