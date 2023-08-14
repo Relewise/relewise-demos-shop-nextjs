@@ -24,7 +24,7 @@ export default function SearchBar() {
   );
 
   useEffect(() => {
-    router.push(pathname + "?" + createQueryString("Term", input));
+    router.push("?" + createQueryString("Term", input));
   }, [createQueryString, input, pathname, router]);
 
   return (
