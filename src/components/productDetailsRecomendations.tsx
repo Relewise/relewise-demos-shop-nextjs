@@ -47,7 +47,7 @@ const Component = () => {
         .addRequest(productsViewedAfterViewing.build());
 
     contextStore
-      .getRecomender()
+      .getRecommender()
       .batchProductRecommendations(productRecommendationsBuilder.build())
       .then((result) => {
         if (result && result.responses) {

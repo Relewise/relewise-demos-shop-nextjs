@@ -47,7 +47,7 @@ export class ContextStore {
     return appContext.datasets.length > 0;
   }
 
-  getRecomender(): Recommender {
+  getRecommender(): Recommender {
     const selectedDataset = this.getSelectedDataset();
 
     return new Recommender(selectedDataset.datasetId, selectedDataset.apiKey, {
