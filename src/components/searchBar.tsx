@@ -1,8 +1,7 @@
 "use client";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { usePathname, useSearchParams } from "next/navigation";
-import { useRouter } from "next/navigation";
-import React, { useCallback, useEffect } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import React, { useEffect } from "react";
 import SearchOverlay from "./searchOverlay";
 
 export default function SearchBar() {
@@ -13,19 +12,16 @@ export default function SearchBar() {
   const currentInput = searchParams.get("Term") ?? "";
   const [input, setInput] = React.useState(currentInput);
 
-  const createQueryString = useCallback(
-    (name: string, value: string) => {
-      const params = new URLSearchParams(searchParams.toString());
-      params.set(name, value);
-
-      return params.toString();
-    },
-    [searchParams]
-  );
-
   useEffect(() => {
-    router.push("?" + createQueryString("Term", input));
-  }, [createQueryString, input, pathname, router]);
+    const params = new URLSearchParams(searchParams.toString());
+    if (input.length > 0) {
+      params.set("Term", input);
+    } else {
+      params.delete("Term");
+    }
+
+    router.push("?" + params);
+  }, [input, pathname, router, searchParams]);
 
   return (
     <div className="inline-flex overflow-hidden rounded-full w-full max-w-2xl border-1 border-white focus:border-zinc-100 relative">
