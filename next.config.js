@@ -10,11 +10,11 @@ const assetPrefix = ON_GITHUB_PAGES ? `/${repoName}/` : "";
 const nextConfig = {
   images: {
     unoptimized: true,
-    domains: ["relewise.com"],
+    domains: ["relewise.com"]
   },
   output: "export",
   basePath,
-  assetPrefix,
+  assetPrefix
 };
 
 module.exports = nextConfig;
