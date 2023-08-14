@@ -1,10 +1,20 @@
 /** @type {import('next').NextConfig} */
+
+const ON_GITHUB_PAGES = process.env.NODE_ENV === "production";
+
+const repoName = "relewise-demos-shop-nextjs";
+
+const basePath = ON_GITHUB_PAGES ? `/${repoName}` : "";
+const assetPrefix = ON_GITHUB_PAGES ? `/${repoName}/` : "";
+
 const nextConfig = {
   images: {
     unoptimized: true,
-    domains: ['relewise.com'],
+    domains: ["relewise.com"],
   },
-  output: 'export'
-}
+  output: "export",
+  basePath,
+  assetPrefix,
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
