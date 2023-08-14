@@ -1,6 +1,5 @@
 import Product from "@/components/product";
 import ProductDetailsRecomendations from "@/components/productDetailsRecomendations";
-import { useSearchParams } from "next/navigation";
 
 export default function ProductPage() {
   return (

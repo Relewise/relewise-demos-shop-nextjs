@@ -1,6 +1,6 @@
+import { basePath } from "@/util/basePath";
 import { ProductResult } from "@relewise/client";
 import ProductImage from "./productImage";
-import { basePath } from "@/util/basePath";
 interface ProductTileProps {
   product: ProductResult;
 }
