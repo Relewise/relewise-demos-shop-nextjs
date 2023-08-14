@@ -10,13 +10,15 @@ import {
   SearchTermPredictionResponse,
   SearchTermPredictionResult
 } from "@relewise/client";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import dynamic from "next/dynamic";
+import { useSearchParams } from "next/navigation";
 import * as React from "react";
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
-import ProductTile from "./product/productTile";
-import dynamic from "next/dynamic";
+import Facets from "./facets";
 import Pagination from "./pagination";
+import ProductTile from "./product/productTile";
+import { useRouter } from "next/navigation";
 
 interface SearchOverlayProps {
   input: string;
@@ -24,6 +26,21 @@ interface SearchOverlayProps {
 }
 
 const Component = (props: SearchOverlayProps) => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pageSize = 28;
+
+  const currentSelectedBrands = searchParams.get("Brand")?.split(",");
+  const currentSelectedSubCategories = searchParams.get("Category")?.split(",");
+  const currentSelectedMinPrice = searchParams.get("MinPrice");
+  const currentSelectedMaxPrice = searchParams.get("MaxPrice");
+
+  const [minPrice, setMinPrice] = React.useState<number | undefined>(
+    currentSelectedMinPrice ? +currentSelectedMinPrice : undefined
+  );
+  const [maxPrice, setMaxPrice] = React.useState<number | undefined>(
+    currentSelectedMaxPrice ? +currentSelectedMaxPrice : undefined
+  );
   const [products, setProducts] = React.useState<
     ProductSearchResponse | undefined
   >();
@@ -33,18 +50,83 @@ const Component = (props: SearchOverlayProps) => {
   const [predictions, setPredictions] = React.useState<
     SearchTermPredictionResult[]
   >([]);
+
+  const [selectedFacets, setSelectedFacets] = React.useState<
+    Record<string, string[]>
+  >({
+    Category: currentSelectedSubCategories ?? [],
+    Brand: currentSelectedBrands ?? []
+  });
   const [page, setPage] = React.useState(1);
 
   const isSearching = () => {
     return props.input.length > 0;
   };
 
-  const pageSize = 28;
-
   function goToPage(page: number) {
     setPage(page);
     window.scrollTo(0, 0);
   }
+
+  const getFacetsByType = React.useCallback(
+    (type: string) => {
+      if (!selectedFacets[type] || selectedFacets[type].length < 1) {
+        return null;
+      }
+      return selectedFacets[type];
+    },
+    [selectedFacets]
+  );
+
+  function setFacet(type: string, value: string) {
+    const currentSelectFacetValues = getFacetsByType(type);
+    const valueAlreadySelected =
+      (currentSelectFacetValues?.find((v) => v === value)?.length ?? 0) > 0;
+
+    if (valueAlreadySelected) {
+      const newSelectFacets = { ...selectedFacets };
+      const indexToRemove = newSelectFacets[type].indexOf(value);
+      newSelectFacets[type].splice(indexToRemove, 1);
+      setSelectedFacets(newSelectFacets);
+      return;
+    }
+
+    const newSelectFacets = { ...selectedFacets };
+    newSelectFacets[type].push(value);
+    setSelectedFacets(newSelectFacets);
+  }
+
+  const setQueryString = React.useCallback(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    const categoryFacets = getFacetsByType("Category");
+    const brandFacets = getFacetsByType("Brand");
+
+    if (categoryFacets) {
+      params.set("Category", categoryFacets.toString());
+    } else {
+      params.delete("Category");
+    }
+
+    if (brandFacets) {
+      params.set("Brand", brandFacets.toString());
+    } else {
+      params.delete("Brand");
+    }
+
+    if (minPrice) {
+      params.set("MinPrice", minPrice.toString());
+    } else {
+      params.delete("MinPrice");
+    }
+
+    if (maxPrice) {
+      params.set("MaxPrice", maxPrice.toString());
+    } else {
+      params.delete("MaxPrice");
+    }
+
+    router.push("?" + params.toString());
+  }, [getFacetsByType, maxPrice, minPrice, router, searchParams]);
 
   useEffect(() => {
     const contextStore = new ContextStore();
@@ -63,13 +145,19 @@ const Component = (props: SearchOverlayProps) => {
     }
 
     mainContainer.classList.add("hidden");
-
+    setQueryString();
     const searchCollectionBuilder = new SearchCollectionBuilder()
       .addRequest(
         new ProductSearchBuilder(contextStore.getDefaultSettings())
           .setSelectedProductProperties(contextStore.getProductSettings())
           .setSelectedVariantProperties({ allData: true })
           .setTerm(props.input.length > 0 ? props.input : null)
+          .facets((f) =>
+            f
+              .addCategoryFacet("ImmediateParent", getFacetsByType("Category"))
+              .addBrandFacet(getFacetsByType("Brand"))
+              .addSalesPriceRangeFacet("Product", minPrice, maxPrice)
+          )
           .pagination((p) => p.setPageSize(pageSize).setPage(page))
           .build()
       )
@@ -113,7 +201,7 @@ const Component = (props: SearchOverlayProps) => {
         }
       }
     });
-  }, [page, props.input]);
+  }, [getFacetsByType, maxPrice, minPrice, page, props.input, setQueryString]);
 
   return isSearching() && document != undefined
     ? createPortal(
@@ -138,6 +226,16 @@ const Component = (props: SearchOverlayProps) => {
                           </a>
                         ))}
                       </div>
+                    )}
+                    {products?.facets && (
+                      <Facets
+                        facets={products?.facets}
+                        setFacet={setFacet}
+                        minPrice={minPrice}
+                        maxPrice={maxPrice}
+                        setMinPrice={setMinPrice}
+                        setMaxPrice={setMaxPrice}
+                      />
                     )}
                   </div>
                   <div className="w-4/5">
