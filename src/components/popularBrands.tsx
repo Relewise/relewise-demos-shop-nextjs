@@ -9,13 +9,13 @@ import Link from "next/link";
 import React, { useEffect } from "react";
 
 const Component = () => {
-  const contextStore = new ContextStore();
-
   const [popularBrands, setPopularBrands] = React.useState<
     BrandResult[] | null | undefined
   >();
 
   useEffect(() => {
+    const contextStore = new ContextStore();
+
     if (!contextStore.isConfigured()) {
       return;
     }
@@ -31,24 +31,24 @@ const Component = () => {
       });
   }, []);
 
-  if (!contextStore.isConfigured()) {
-    return <></>;
-  }
-
   return (
     <>
-      <h2 className="text-3xl font-semibold mb-3 mt-10">Popular brands</h2>
-      <div className="grid gap-3 grid-cols-2 lg:grid-cols-5 mt-3">
-        {popularBrands?.map((brand, index) => (
-          <Link
-            key={index}
-            href={`?brand=${brand.id}`}
-            className="rounded bg-white hover:bg-zinc-200 px-3 py-3"
-          >
-            {brand.displayName ?? brand.id}
-          </Link>
-        ))}
-      </div>
+      {popularBrands && (
+        <>
+          <h2 className="text-3xl font-semibold mb-3 mt-10">Popular brands</h2>
+          <div className="grid gap-3 grid-cols-2 lg:grid-cols-5 mt-3">
+            {popularBrands.map((brand, index) => (
+              <Link
+                key={index}
+                href={`?brand=${brand.id}`}
+                className="rounded bg-white hover:bg-zinc-200 px-3 py-3"
+              >
+                {brand.displayName ?? brand.id}
+              </Link>
+            ))}
+          </div>
+        </>
+      )}
     </>
   );
 };

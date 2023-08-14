@@ -9,18 +9,22 @@ import {
 } from "@relewise/client";
 import dynamic from "next/dynamic";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import Facets from "./facets";
 import Pagination from "./pagination";
 import ProductTile from "./product/productTile";
 
 const Component = () => {
-  const contextStore = new ContextStore();
+  const contextStore = useCallback(() => new ContextStore(), []);
   const router = useRouter();
   const searchParams = useSearchParams();
   const currentSort = (searchParams.get("Sort") as Sort) ?? Sort.Recommended;
   const currentSelectedBrands = searchParams.get("Brand")?.split(",");
-  const categoryIds = searchParams.get("CategoryIds")?.split(",") ?? [];
+
+  const categoryIds = useCallback(() => {
+    return searchParams.get("CategoryIds")?.split(",") ?? [];
+  }, [searchParams]);
+
   const currentSelectedSubCategories = searchParams
     .get("SubCategory")
     ?.split(",");
@@ -46,12 +50,22 @@ const Component = () => {
   const [page, setPage] = useState(1);
   const pageSize = 40;
 
-  const setQueryString = () => {
+  const getFacetsByType = useCallback(
+    (type: string) => {
+      if (!selectedFacets[type] || selectedFacets[type].length < 1) {
+        return null;
+      }
+      return selectedFacets[type];
+    },
+    [selectedFacets]
+  );
+
+  const setQueryString = useCallback(() => {
     const params = new URLSearchParams();
     const categoryFacets = getFacetsByType("SubCategory");
     const brandFacets = getFacetsByType("Brand");
 
-    params.set("CategoryIds", categoryIds.toString());
+    params.set("CategoryIds", categoryIds().toString());
 
     if (categoryFacets && categoryFacets.length > 0) {
       params.set("SubCategory", categoryFacets.toString());
@@ -71,7 +85,7 @@ const Component = () => {
 
     params.set("Sort", sort);
     router.push("?" + params.toString());
-  };
+  }, [categoryIds, getFacetsByType, maxPrice, minPrice, router, sort]);
 
   function goToPage(page: number) {
     setPage(page);
@@ -81,13 +95,6 @@ const Component = () => {
   function onSortChange(e: ChangeEvent<HTMLSelectElement>) {
     const sortBy = e.target.value as Sort;
     setSort(sortBy);
-  }
-
-  function getFacetsByType(type: string) {
-    if (!selectedFacets[type] || selectedFacets[type].length < 1) {
-      return null;
-    }
-    return selectedFacets[type];
   }
 
   function setFacet(type: string, value: string) {
@@ -109,18 +116,18 @@ const Component = () => {
   }
 
   useEffect(() => {
-    if (!contextStore.isConfigured()) {
+    if (!contextStore().isConfigured()) {
       return;
     }
 
-    const searcher = contextStore.getSearcher();
+    const searcher = contextStore().getSearcher();
     const productCategorySearchBuilder = new ProductCategorySearchBuilder(
-      contextStore.getDefaultSettings()
+      contextStore().getDefaultSettings()
     )
       .setSelectedCategoryProperties({ displayName: true })
       .filters((f) =>
         f.addProductCategoryIdFilter("ImmediateParentOrItsParent", [
-          categoryIds[categoryIds.length - 1]
+          categoryIds()[categoryIds.length - 1]
         ])
       );
 
@@ -131,23 +138,23 @@ const Component = () => {
           setCategory(response?.results[0]);
         }
       });
-  }, [categoryIds]);
+  }, [categoryIds, contextStore]);
 
   useEffect(() => {
-    if (!contextStore.isConfigured()) {
+    if (!contextStore().isConfigured()) {
       return;
     }
 
     setQueryString();
     const productSearchBuild = new ProductSearchBuilder(
-      contextStore.getDefaultSettings()
+      contextStore().getDefaultSettings()
     )
-      .setSelectedProductProperties(contextStore.getProductSettings())
+      .setSelectedProductProperties(contextStore().getProductSettings())
       .setSelectedVariantProperties({ allData: true })
       .setExplodedVariants(1)
       .filters((f) => {
         f.addProductCategoryIdFilter("Ancestor", [
-          categoryIds[categoryIds.length - 1]
+          categoryIds()[categoryIds().length - 1]
         ]);
       })
       .facets((f) =>
@@ -177,14 +184,24 @@ const Component = () => {
         }
       });
 
-    contextStore
+    contextStore()
       .getSearcher()
       .searchProducts(productSearchBuild.build())
       .then((response) => {
         setProducts(response);
         setPage(1);
       });
-  }, [page, sort, selectedFacets, minPrice, maxPrice]);
+  }, [
+    page,
+    sort,
+    selectedFacets,
+    minPrice,
+    maxPrice,
+    contextStore,
+    setQueryString,
+    categoryIds,
+    getFacetsByType
+  ]);
 
   return (
     <div className="search">

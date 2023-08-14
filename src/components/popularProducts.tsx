@@ -6,13 +6,13 @@ import React, { useEffect } from "react";
 import ProductTile from "./product/productTile";
 
 const Component = () => {
-  const contextStore = new ContextStore();
-
   const [popularProducts, setPopularProducts] = React.useState<
     ProductResult[] | null | undefined
   >();
 
   useEffect(() => {
+    const contextStore = new ContextStore();
+
     if (!contextStore.isConfigured()) {
       return;
     }
@@ -29,18 +29,18 @@ const Component = () => {
       });
   }, []);
 
-  if (!contextStore.isConfigured()) {
-    return <></>;
-  }
-
   return (
     <>
-      <h2 className="text-3xl font-semibold mb-3">Popular products</h2>
-      <div className="grid gap-3 grid-cols-5 mt-3">
-        {popularProducts?.map((product, index) => (
-          <ProductTile key={index} product={product} />
-        ))}
-      </div>
+      {popularProducts && (
+        <>
+          <h2 className="text-3xl font-semibold mb-3">Popular products</h2>
+          <div className="grid gap-3 grid-cols-5 mt-3">
+            {popularProducts.map((product, index) => (
+              <ProductTile key={index} product={product} />
+            ))}
+          </div>
+        </>
+      )}
     </>
   );
 };

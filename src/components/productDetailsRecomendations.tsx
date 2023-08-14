@@ -14,7 +14,6 @@ import ProductGrid from "./product/productGrid";
 const Component = () => {
   const searchParams = useSearchParams();
   const id = searchParams.get("Id") ?? "";
-  const contextStore = new ContextStore();
 
   const [purchasedWithProduct, setPurchasedWithProduct] = React.useState<
     ProductResult[] | null | undefined
@@ -23,6 +22,7 @@ const Component = () => {
     React.useState<ProductResult[] | null | undefined>();
 
   useEffect(() => {
+    const contextStore = new ContextStore();
     if (!contextStore.isConfigured()) {
       return;
     }
@@ -55,22 +55,22 @@ const Component = () => {
           setProductsViewedAfterViewing(result.responses[1].recommendations);
         }
       });
-  }, []);
-
-  if (!contextStore.isConfigured()) {
-    return <> </>;
-  }
+  }, [id]);
 
   return (
     <>
-      <ProductGrid
-        title="Purchased with"
-        products={purchasedWithProduct ?? []}
-      />
-      <ProductGrid
-        title="Products viewed after viewing"
-        products={productsViewedAfterViewing ?? []}
-      />
+      {purchasedWithProduct && (
+        <ProductGrid
+          title="Purchased with"
+          products={purchasedWithProduct ?? []}
+        />
+      )}
+      {productsViewedAfterViewing && (
+        <ProductGrid
+          title="Products viewed after viewing"
+          products={productsViewedAfterViewing ?? []}
+        />
+      )}
     </>
   );
 };

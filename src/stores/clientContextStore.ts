@@ -6,13 +6,10 @@ import {
   UserFactory
 } from "@relewise/client";
 import { getCookie, setCookie } from "cookies-next";
-import { useRouter } from "next/navigation";
 import { AppContext } from "./appContext";
 import { Dataset } from "./dataset";
 
 export class ContextStore {
-  router = useRouter();
-
   getSelectedDataset(): Dataset {
     const appContext = this.getAppContext();
     if (appContext.datasets.length < 1) {
@@ -80,7 +77,6 @@ export class ContextStore {
 
   setAppContext(appContext: AppContext) {
     setCookie("shopContext", JSON.stringify(appContext));
-    this.router.refresh();
   }
 
   saveDataset(dataset: Dataset) {
@@ -89,7 +85,6 @@ export class ContextStore {
     this.setAppContext(
       new AppContext(appContext.selectedDatasetIndex, appContext.datasets)
     );
-    this.router.refresh();
   }
 
   addEmptyDataset() {
@@ -100,13 +95,11 @@ export class ContextStore {
     this.setAppContext(
       new AppContext(appContext.datasets.length - 1, appContext.datasets)
     );
-    this.router.refresh();
   }
 
   setSelectedDatasetIndex(index: number) {
     const appContext = this.getAppContext();
     this.setAppContext(new AppContext(index, appContext.datasets));
-    this.router.refresh();
   }
 
   deleteSelectedDataset() {
@@ -114,6 +107,5 @@ export class ContextStore {
     appContext.datasets.splice(appContext.selectedDatasetIndex, 1);
 
     this.setAppContext(new AppContext(0, appContext.datasets));
-    this.router.refresh();
   }
 }

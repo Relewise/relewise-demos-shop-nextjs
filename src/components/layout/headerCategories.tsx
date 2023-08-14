@@ -19,9 +19,9 @@ const Component = () => {
       ).length > 0
     );
   };
-  const contextStore = new ContextStore();
 
   useEffect(() => {
+    const contextStore = new ContextStore();
     getCategories(contextStore).then((result) => setCategories(result));
   }, []);
 
