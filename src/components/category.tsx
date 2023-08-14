@@ -8,7 +8,7 @@ import {
   ProductSearchResponse
 } from "@relewise/client";
 import dynamic from "next/dynamic";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ChangeEvent, useEffect, useState } from "react";
 import Facets from "./facets";
 import Pagination from "./pagination";
@@ -17,7 +17,6 @@ import ProductTile from "./product/productTile";
 const Component = () => {
   const contextStore = new ContextStore();
   const router = useRouter();
-  const pathname = usePathname();
   const searchParams = useSearchParams();
   const currentSort = (searchParams.get("Sort") as Sort) ?? Sort.Recommended;
   const currentSelectedBrands = searchParams.get("Brand")?.split(",");
@@ -71,7 +70,7 @@ const Component = () => {
     }
 
     params.set("Sort", sort);
-    router.push(pathname + "?" + params.toString());
+    router.push("?" + params.toString());
   };
 
   function goToPage(page: number) {
