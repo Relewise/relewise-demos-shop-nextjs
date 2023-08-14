@@ -16,6 +16,7 @@ import { useEffect } from "react";
 import { createPortal } from "react-dom";
 import ProductTile from "./product/productTile";
 import dynamic from "next/dynamic";
+import Pagination from "./pagination";
 
 interface SearchOverlayProps {
   input: string;
@@ -33,12 +34,17 @@ const Component = (props: SearchOverlayProps) => {
     SearchTermPredictionResult[]
   >([]);
   const [page, setPage] = React.useState(1);
-  const router = useRouter();
-  const pathname = usePathname();
 
   const isSearching = () => {
     return props.input.length > 0;
   };
+
+  const pageSize = 28;
+
+  function goToPage(page: number) {
+    setPage(page);
+    window.scrollTo(0, 0);
+  }
 
   useEffect(() => {
     const contextStore = new ContextStore();
@@ -64,7 +70,7 @@ const Component = (props: SearchOverlayProps) => {
           .setSelectedProductProperties(contextStore.getProductSettings())
           .setSelectedVariantProperties({ allData: true })
           .setTerm(props.input.length > 0 ? props.input : null)
-          .pagination((p) => p.setPageSize(30).setPage(page))
+          .pagination((p) => p.setPageSize(pageSize).setPage(page))
           .build()
       )
       .addRequest(
@@ -140,9 +146,11 @@ const Component = (props: SearchOverlayProps) => {
                         Showing results for <strong>{props.input}</strong>
                       </h2>
                       <span v-if="result.hits > 0">
-                        Showing {page * 30 - 29} -{" "}
-                        {products?.hits < 30 ? products?.hits : page * 30} of{" "}
-                        {products?.hits}
+                        Showing {page * pageSize - 29} -{" "}
+                        {products?.hits < pageSize
+                          ? products?.hits
+                          : page * pageSize}{" "}
+                        of {products?.hits}
                       </span>
                     </div>
                     {products.redirects && products.redirects.length > 0 && (
@@ -165,10 +173,20 @@ const Component = (props: SearchOverlayProps) => {
                         No products found
                       </div>
                     ) : (
-                      <div className="grid gap-3 grid-cols-4">
-                        {products?.results?.map((product, index) => (
-                          <ProductTile key={index} product={product} />
-                        ))}
+                      <div>
+                        <div className="grid gap-3 grid-cols-4">
+                          {products?.results?.map((product, index) => (
+                            <ProductTile key={index} product={product} />
+                          ))}
+                        </div>
+                        <div className="py-3 flex justify-center">
+                          <Pagination
+                            currentPage={page}
+                            total={products.hits}
+                            pageSize={pageSize}
+                            goToPage={goToPage}
+                          />
+                        </div>
                       </div>
                     )}
 
