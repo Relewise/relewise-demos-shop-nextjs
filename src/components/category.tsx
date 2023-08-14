@@ -20,14 +20,10 @@ const Component = () => {
   const searchParams = useSearchParams();
   const currentSort = (searchParams.get("Sort") as Sort) ?? Sort.Recommended;
   const currentSelectedBrands = searchParams.get("Brand")?.split(",");
-
   const categoryIds = useCallback(() => {
     return searchParams.get("CategoryIds")?.split(",") ?? [];
   }, [searchParams]);
-
-  const currentSelectedSubCategories = searchParams
-    .get("SubCategory")
-    ?.split(",");
+  const currentSelectedSubCategories = searchParams.get("Category")?.split(",");
   const currentSelectedMinPrice = searchParams.get("MinPrice");
   const currentSelectedMaxPrice = searchParams.get("MaxPrice");
 
@@ -45,7 +41,6 @@ const Component = () => {
   const [maxPrice, setMaxPrice] = useState<number | undefined>(
     currentSelectedMaxPrice ? +currentSelectedMaxPrice : undefined
   );
-
   const [sort, setSort] = useState<Sort>(currentSort);
   const [page, setPage] = useState(1);
   const pageSize = 40;
@@ -62,25 +57,33 @@ const Component = () => {
 
   const setQueryString = useCallback(() => {
     const params = new URLSearchParams(searchParams.toString());
-    const categoryFacets = getFacetsByType("SubCategory");
+    const categoryFacets = getFacetsByType("Category");
     const brandFacets = getFacetsByType("Brand");
 
     params.set("CategoryIds", categoryIds().toString());
 
-    if (categoryFacets && categoryFacets.length > 0) {
-      params.set("SubCategory", categoryFacets.toString());
+    if (categoryFacets) {
+      params.set("Category", categoryFacets.toString());
+    } else {
+      params.delete("Category");
     }
 
-    if (brandFacets && brandFacets.length > 0) {
+    if (brandFacets) {
       params.set("Brand", brandFacets.toString());
+    } else {
+      params.delete("Brand");
     }
 
     if (minPrice) {
       params.set("MinPrice", minPrice.toString());
+    } else {
+      params.delete("MinPrice");
     }
 
     if (maxPrice) {
       params.set("MaxPrice", maxPrice.toString());
+    } else {
+      params.delete("MaxPrice");
     }
 
     params.set("Sort", sort);
