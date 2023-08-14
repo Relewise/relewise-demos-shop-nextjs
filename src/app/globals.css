@@ -23,6 +23,11 @@ button {
 
 input[type="text"] {
   @apply block w-full rounded-md border border-zinc-100 py-2.5 px-4 bg-zinc-100 shadow-sm focus:border-zinc-300 focus:ring-1 focus:ring-zinc-200 focus:outline-none;
+
+  &.small {
+      @apply py-1.5 px-2;
+  }
+
 }
 
 a {
@@ -31,4 +36,16 @@ a {
 
 select {
   @apply mt-1 block w-full rounded-md border-zinc-100 py-2.5 px-4 bg-zinc-100 shadow-sm focus:border-zinc-300 focus:ring focus:ring-zinc-200 focus:ring-opacity-50 focus:outline-none;
+}
+
+.item {
+  @apply px-3 h-10 inline-flex items-center rounded cursor-pointer text-zinc-800 font-semibold bg-white hover:bg-zinc-200;
+
+  &:disabled {
+      @apply opacity-50 pointer-events-none;
+   
+      &.active {
+          @apply bg-blue-200 text-blue-800 pointer-events-none opacity-100;
+      }        
+  }
 }
