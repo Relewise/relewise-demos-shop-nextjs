@@ -1,6 +1,7 @@
 import { ShoppingBagIcon } from "@heroicons/react/24/outline";
 import SearchBar from "../searchBar";
 import HeaderCategories from "./headerCategories";
+import { basePath } from "@/util/basePath";
 
 export default function Header() {
   return (
@@ -9,7 +10,7 @@ export default function Header() {
         <div className="flex gap-10 py-2">
           <div className="flex items-center">
             <a
-              href="/"
+              href={`${basePath}/`}
               className="font-semibold text-2xl uppercase text-black leading-normal block hover:opacity-70 transitions ease-in-out delay-150"
             >
               Relewise{" "}
