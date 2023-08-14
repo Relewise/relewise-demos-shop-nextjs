@@ -1,106 +1,111 @@
-import { Recommender, Searcher, SelectedProductPropertiesSettings, Settings, UserFactory } from "@relewise/client";
+import {
+  Recommender,
+  Searcher,
+  SelectedProductPropertiesSettings,
+  Settings,
+  UserFactory
+} from "@relewise/client";
 import { getCookie, setCookie } from "cookies-next";
-import { useRouter } from "next/navigation";
 import { AppContext } from "./appContext";
 import { Dataset } from "./dataset";
 
 export class ContextStore {
-    router = useRouter();
+  getSelectedDataset(): Dataset {
+    const appContext = this.getAppContext();
+    if (appContext.datasets.length < 1) {
+      return new Dataset();
+    }
+    return appContext.datasets[appContext.selectedDatasetIndex];
+  }
 
-    getSelectedDataset(): Dataset {
-        const appContext = this.getAppContext();
-        if (appContext.datasets.length < 1) {
-            return new Dataset();
-        }
-        return appContext.datasets[appContext.selectedDatasetIndex];
+  getProductSettings(): SelectedProductPropertiesSettings {
+    return {
+      displayName: true,
+      allData: true,
+      brand: true,
+      categoryPaths: true,
+      pricing: true
+    } as SelectedProductPropertiesSettings;
+  }
+
+  getDefaultSettings(): Settings {
+    if (!this.isConfigured()) {
+      throw new Error("Missing language or currencycode");
     }
 
-    getProductSettings(): SelectedProductPropertiesSettings {
-        return {
-            displayName: true,
-            allData: true,
-            brand: true,
-            categoryPaths: true,
-            pricing: true,
-        } as SelectedProductPropertiesSettings
+    const dataset = this.getSelectedDataset();
+    return {
+      language: dataset.language,
+      currency: dataset.currencyCode,
+      displayedAtLocation: "Relewise Demo Store",
+      user: UserFactory.anonymous()
+    };
+  }
+
+  isConfigured(): boolean {
+    const appContext = this.getAppContext();
+    return appContext.datasets.length > 0;
+  }
+
+  getRecomender(): Recommender {
+    const selectedDataset = this.getSelectedDataset();
+
+    return new Recommender(selectedDataset.datasetId, selectedDataset.apiKey, {
+      serverUrl: selectedDataset.serverUrl
+    });
+  }
+
+  getSearcher(): Searcher {
+    const selectedDataset = this.getSelectedDataset();
+
+    return new Searcher(selectedDataset.datasetId, selectedDataset.apiKey, {
+      serverUrl: selectedDataset.serverUrl
+    });
+  }
+  getAppContext(): AppContext {
+    const cookie = getCookie("shopContext")?.toString();
+
+    if (cookie) {
+      const appContextFromCookie: AppContext = JSON.parse(cookie);
+      return appContextFromCookie;
     }
 
-    getDefaultSettings(): Settings {
-        if (!this.isConfigured()) {
-            throw new Error('Missing language or currencycode');
-        }
+    const newAppContext = new AppContext(0, []);
 
-        const dataset = this.getSelectedDataset();
-        return {
-            language: dataset.language,
-            currency: dataset.currencyCode,
-            displayedAtLocation: 'Relewise Demo Store',
-            user: UserFactory.anonymous(),
-        };
-    }
+    return newAppContext;
+  }
 
-    isConfigured(): boolean {
-        const appContext = this.getAppContext();
-        return appContext.datasets.length > 0;
-    }
+  setAppContext(appContext: AppContext) {
+    setCookie("shopContext", JSON.stringify(appContext));
+  }
 
-    getRecomender(): Recommender {
-        const selectedDataset = this.getSelectedDataset();
+  saveDataset(dataset: Dataset) {
+    const appContext = this.getAppContext();
+    appContext.datasets[appContext.selectedDatasetIndex] = dataset;
+    this.setAppContext(
+      new AppContext(appContext.selectedDatasetIndex, appContext.datasets)
+    );
+  }
 
-        return new Recommender(selectedDataset.datasetId, selectedDataset.apiKey, { serverUrl: selectedDataset.serverUrl });
-    }
+  addEmptyDataset() {
+    const appContext = this.getAppContext();
+    const newDataset = new Dataset();
+    appContext.datasets.push(newDataset);
 
-    getSearcher(): Searcher {
-        const selectedDataset = this.getSelectedDataset();
+    this.setAppContext(
+      new AppContext(appContext.datasets.length - 1, appContext.datasets)
+    );
+  }
 
-        return new Searcher(selectedDataset.datasetId, selectedDataset.apiKey, { serverUrl: selectedDataset.serverUrl });
-    }
-    getAppContext(): AppContext {
-        const cookie = getCookie("shopContext")?.toString();
+  setSelectedDatasetIndex(index: number) {
+    const appContext = this.getAppContext();
+    this.setAppContext(new AppContext(index, appContext.datasets));
+  }
 
-        if (cookie) {
-            const appContextFromCookie: AppContext = JSON.parse(cookie);
-            return appContextFromCookie;
-        }
+  deleteSelectedDataset() {
+    const appContext = this.getAppContext();
+    appContext.datasets.splice(appContext.selectedDatasetIndex, 1);
 
-        const newAppContext = new AppContext(0, []);
-
-        return newAppContext;
-    }
-
-    setAppContext(appContext: AppContext) {
-        setCookie("shopContext", JSON.stringify(appContext))
-        this.router.refresh();
-    }
-
-    saveDataset(dataset: Dataset) {
-        const appContext = this.getAppContext();
-        appContext.datasets[appContext.selectedDatasetIndex] = dataset;
-        this.setAppContext(new AppContext(appContext.selectedDatasetIndex, appContext.datasets));
-        this.router.refresh();
-    }
-
-    addEmptyDataset() {
-        const appContext = this.getAppContext();
-        const newDataset = new Dataset();
-        appContext.datasets.push(newDataset);
-
-        this.setAppContext(new AppContext(appContext.datasets.length - 1, appContext.datasets));
-        this.router.refresh();
-    }
-
-    setSelectedDatasetIndex(index: number) {
-        const appContext = this.getAppContext();
-        this.setAppContext(new AppContext(index, appContext.datasets));
-        this.router.refresh();
-    }
-
-    deleteSelectedDataset() {
-        const appContext = this.getAppContext();
-        appContext.datasets.splice(appContext.selectedDatasetIndex, 1);
-
-        this.setAppContext(new AppContext(0, appContext.datasets));
-        this.router.refresh();
-    }
+    this.setAppContext(new AppContext(0, appContext.datasets));
+  }
 }
-

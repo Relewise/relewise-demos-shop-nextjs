@@ -3,9 +3,9 @@
 @tailwind utilities;
 
 :root {
-  --slider-tooltip-bg: #3764E4;
-  --slider-connect-bg: #3764E4;
-  --slider-handle-ring-color: rgba(55, 100, 228, .188);
+  --slider-tooltip-bg: #3764e4;
+  --slider-connect-bg: #3764e4;
+  --slider-handle-ring-color: rgba(55, 100, 228, 0.188);
 }
 
 html,
@@ -25,9 +25,8 @@ input[type="text"] {
   @apply block w-full rounded-md border border-zinc-100 py-2.5 px-4 bg-zinc-100 shadow-sm focus:border-zinc-300 focus:ring-1 focus:ring-zinc-200 focus:outline-none;
 
   &.small {
-      @apply py-1.5 px-2;
+    @apply py-1.5 px-2;
   }
-
 }
 
 a {
@@ -42,10 +41,10 @@ select {
   @apply px-3 h-10 inline-flex items-center rounded cursor-pointer text-zinc-800 font-semibold bg-white hover:bg-zinc-200;
 
   &:disabled {
-      @apply opacity-50 pointer-events-none;
-   
-      &.active {
-          @apply bg-blue-200 text-blue-800 pointer-events-none opacity-100;
-      }        
+    @apply opacity-50 pointer-events-none;
+
+    &.active {
+      @apply bg-blue-200 text-blue-800 pointer-events-none opacity-100;
+    }
   }
 }

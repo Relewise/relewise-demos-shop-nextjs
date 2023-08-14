@@ -9,11 +9,12 @@ import React, { useEffect } from "react";
 const Component = () => {
   const searchParams = useSearchParams();
   const id = searchParams.get("Id") ?? "";
-  const contextStore = new ContextStore();
 
   const [product, setProduct] = React.useState<ProductResult | undefined>();
 
   useEffect(() => {
+    const contextStore = new ContextStore();
+
     if (!contextStore.isConfigured()) {
       return;
     }
@@ -30,7 +31,7 @@ const Component = () => {
           setProduct(result.results[0]);
         }
       });
-  }, []);
+  }, [id]);
 
   return (
     <div>

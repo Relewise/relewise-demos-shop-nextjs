@@ -1,10 +1,9 @@
 "use client";
+import { basePath } from "@/util/basePath";
 import { CategoryHierarchyFacetResultCategoryNode } from "@relewise/client";
 import dynamic from "next/dynamic";
-import Link from "next/link";
 import React from "react";
 import ConfigureDemoSettingsButton from "../configureDemoSettingsButton";
-import { basePath } from "@/util/basePath";
 
 interface NestedHeaderCategoriesProps {
   categories: CategoryHierarchyFacetResultCategoryNode[];
