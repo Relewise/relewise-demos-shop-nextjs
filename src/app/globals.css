@@ -48,3 +48,25 @@ select {
     }
   }
 }
+
+.item {
+  @apply px-3 h-10 inline-flex items-center rounded cursor-pointer text-zinc-800 font-semibold bg-white hover:bg-zinc-200;
+
+  &:disabled {
+    @apply opacity-50 pointer-events-none;
+
+    &.active {
+      @apply bg-blue-200 text-blue-800 pointer-events-none opacity-100;
+    }
+  }
+}
+
+.modal {
+  @apply bg-zinc-50 overflow-y-scroll;
+  position: fixed;
+  z-index: 1;
+  top: 104px;
+  left: 0;
+  width: 100%;
+  height: calc(100% - 104px);
+}

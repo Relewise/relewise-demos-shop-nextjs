@@ -24,7 +24,7 @@ const Component = () => {
       contextStore.getDefaultSettings()
     );
     contextStore
-      .getRecomender()
+      .getRecommender()
       .recommendPopularBrands(builder.build())
       .then((result) => {
         setPopularBrands(result?.recommendations);

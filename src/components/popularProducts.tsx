@@ -22,7 +22,7 @@ const Component = () => {
     ).setSelectedProductProperties(contextStore.getProductSettings());
 
     contextStore
-      .getRecomender()
+      .getRecommender()
       .recommendPopularProducts(builder.build())
       .then((result) => {
         setPopularProducts(result?.recommendations);

@@ -1,5 +1,6 @@
 import { ShoppingBagIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
+import SearchBar from "../searchBar";
 import HeaderCategories from "./headerCategories";
 
 export default function Header() {
@@ -15,13 +16,13 @@ export default function Header() {
               Relewise{" "}
               <span className="text-white bg-zinc-900 rounded-sm px-1">
                 demo
-              </span>{" "}
+              </span>
               shop
             </Link>
           </div>
 
           <div className="flex items-center flex-grow">
-            {/* <SearchOverlay/> */}
+            <SearchBar />
           </div>
 
           <div className="flex items-center">
