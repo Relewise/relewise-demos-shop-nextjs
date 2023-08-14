@@ -10,7 +10,7 @@ import {
   SearchTermPredictionResponse,
   SearchTermPredictionResult
 } from "@relewise/client";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import * as React from "react";
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
@@ -19,6 +19,7 @@ import dynamic from "next/dynamic";
 
 interface SearchOverlayProps {
   input: string;
+  setInput(input: string): void;
 }
 
 const Component = (props: SearchOverlayProps) => {
@@ -124,9 +125,7 @@ const Component = (props: SearchOverlayProps) => {
                             className="mb-1 block cursor-pointer"
                             key={index}
                             onClick={() => {
-                              const params = new URLSearchParams();
-                              params.set("Term", prediction.term ?? "");
-                              router.push(pathname + "?" + params.toString());
+                              props.setInput(prediction.term ?? "");
                             }}
                           >
                             {prediction.term}

@@ -61,7 +61,7 @@ const Component = () => {
   );
 
   const setQueryString = useCallback(() => {
-    const params = new URLSearchParams();
+    const params = new URLSearchParams(searchParams.toString());
     const categoryFacets = getFacetsByType("SubCategory");
     const brandFacets = getFacetsByType("Brand");
 
@@ -85,7 +85,15 @@ const Component = () => {
 
     params.set("Sort", sort);
     router.push("?" + params.toString());
-  }, [categoryIds, getFacetsByType, maxPrice, minPrice, router, sort]);
+  }, [
+    categoryIds,
+    getFacetsByType,
+    maxPrice,
+    minPrice,
+    router,
+    searchParams,
+    sort
+  ]);
 
   function goToPage(page: number) {
     setPage(page);

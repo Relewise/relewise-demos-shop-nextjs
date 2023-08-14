@@ -38,13 +38,13 @@ const Component = () => {
           <h2 className="text-3xl font-semibold mb-3 mt-10">Popular brands</h2>
           <div className="grid gap-3 grid-cols-2 lg:grid-cols-5 mt-3">
             {popularBrands.map((brand, index) => (
-              <Link
+              <a
                 key={index}
-                href={`?brand=${brand.id}`}
+                href={`?Brand=${brand.id}`}
                 className="rounded bg-white hover:bg-zinc-200 px-3 py-3"
               >
                 {brand.displayName ?? brand.id}
-              </Link>
+              </a>
             ))}
           </div>
         </>

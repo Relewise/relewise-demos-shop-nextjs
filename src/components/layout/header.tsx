@@ -1,5 +1,4 @@
 import { ShoppingBagIcon } from "@heroicons/react/24/outline";
-import Link from "next/link";
 import SearchBar from "../searchBar";
 import HeaderCategories from "./headerCategories";
 
@@ -9,7 +8,7 @@ export default function Header() {
       <div className="container mx-auto">
         <div className="flex gap-10 py-2">
           <div className="flex items-center">
-            <Link
+            <a
               href="/"
               className="font-semibold text-2xl uppercase text-black leading-normal block hover:opacity-70 transitions ease-in-out delay-150"
             >
@@ -18,7 +17,7 @@ export default function Header() {
                 demo
               </span>
               shop
-            </Link>
+            </a>
           </div>
 
           <div className="flex items-center flex-grow">
@@ -26,7 +25,7 @@ export default function Header() {
           </div>
 
           <div className="flex items-center">
-            <Link
+            <a
               href="/cart"
               className="relative rounded-full bg-zinc-100 p-2 text-zinc-600 hover:bg-zinc-200"
             >
@@ -34,7 +33,7 @@ export default function Header() {
               <span className="absolute top-0 right-0 leading-none inline-flex items-center justify-center -mr- h-4 w-4 pb-0.5 bg-blue-500 rounded-full text-white text-[11px]">
                 {/* LINE ITEM COUNT */}0
               </span>
-            </Link>
+            </a>
           </div>
         </div>
       </div>
