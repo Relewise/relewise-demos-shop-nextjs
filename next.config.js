@@ -13,8 +13,8 @@ const nextConfig = {
     domains: ["relewise.com"]
   },
   output: "export",
-  basePath,
-  assetPrefix
+  basePath: basePath,
+  assetPrefix: assetPrefix
 };
 
 module.exports = nextConfig;
