@@ -3,6 +3,7 @@ import { CategoryHierarchyFacetResultCategoryNode } from "@relewise/client";
 import dynamic from "next/dynamic";
 import React from "react";
 import ConfigureDemoSettingsButton from "../configureDemoSettingsButton";
+import { basePath } from "@/util/basePath";
 
 interface FlatHeaderCategoriesProps {
   categories: CategoryHierarchyFacetResultCategoryNode[];
@@ -47,7 +48,7 @@ const Component = (props: FlatHeaderCategoriesProps) => {
                   {props.categories.map((category, index) => (
                     <a
                       key={index}
-                      href={`/category?CategoryIds=${category.category.categoryId}`}
+                      href={`${basePath}/category?CategoryIds=${category.category.categoryId}`}
                       className="text-gray-700 block px-2 py-1 rounded cursor-pointer hover:bg-gray-100"
                     >
                       {category.category.displayName}

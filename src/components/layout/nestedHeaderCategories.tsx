@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import React from "react";
 import ConfigureDemoSettingsButton from "../configureDemoSettingsButton";
+import { basePath } from "@/util/basePath";
 
 interface NestedHeaderCategoriesProps {
   categories: CategoryHierarchyFacetResultCategoryNode[];
@@ -31,7 +32,7 @@ const Component = (props: NestedHeaderCategoriesProps) => {
               >
                 <li className="inline-flex relative pr-5">
                   <a
-                    href={`/category?CategoryIds=${category.category.categoryId}`}
+                    href={`${basePath}/category?CategoryIds=${category.category.categoryId}`}
                     className="font-semibold uppercase py-3 leading-none text-lg text-zinc-700 whitespace-nowrap hover:text-blue-500 transitions ease-in-out delay-150 cursor-pointer"
                   >
                     {category.category.displayName}
@@ -60,7 +61,7 @@ const Component = (props: NestedHeaderCategoriesProps) => {
                   {hoveredCategory.children.map((child, index) => (
                     <a
                       key={index}
-                      href={`/category?CategoryIds=${hoveredCategory.category.categoryId},${child.category.categoryId}`}
+                      href={`${basePath}/category?CategoryIds=${hoveredCategory.category.categoryId},${child.category.categoryId}`}
                       className="text-gray-700 block px-2 py-1 rounded cursor-pointer hover:bg-gray-100"
                     >
                       {child.category.displayName}

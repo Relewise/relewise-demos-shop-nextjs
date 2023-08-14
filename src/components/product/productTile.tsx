@@ -1,5 +1,6 @@
 import { ProductResult } from "@relewise/client";
 import ProductImage from "./productImage";
+import { basePath } from "@/util/basePath";
 interface ProductTileProps {
   product: ProductResult;
 }
@@ -7,7 +8,7 @@ interface ProductTileProps {
 export default function ProductTile(props: ProductTileProps) {
   return (
     <a
-      href={`/product?Id=${props.product.productId}`}
+      href={`${basePath}/product?Id=${props.product.productId}`}
       className="relative rounded flex flex-col overflow-hidden py-3 bg-white hover:bg-brand-50 transition duration-200"
     >
       <div className="relative mx-3 flex h-[275px] overflow-hidden justify-center">
