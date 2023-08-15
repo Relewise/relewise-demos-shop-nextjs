@@ -97,6 +97,26 @@ export class ContextStore {
     );
   }
 
+  addNewDataset(dataset: Dataset) {
+    const appContext = this.getAppContext();
+
+    const existingDatasetsWithSameId = appContext.datasets.find(
+      (d) => d.datasetId == dataset.datasetId
+    );
+
+    if (existingDatasetsWithSameId) {
+      this.setSelectedDatasetIndex(
+        appContext.datasets.indexOf(existingDatasetsWithSameId)
+      );
+      return;
+    }
+
+    appContext.datasets.push(dataset);
+    this.setAppContext(
+      new AppContext(appContext.datasets.length - 1, appContext.datasets)
+    );
+  }
+
   setSelectedDatasetIndex(index: number) {
     const appContext = this.getAppContext();
     this.setAppContext(new AppContext(index, appContext.datasets));
