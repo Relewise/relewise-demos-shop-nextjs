@@ -1,7 +1,7 @@
 "use client";
-import { ContextStore } from "@/stores/clientContextStore";
 import generateFacetQueryString from "@/util/generateFacetQueryString";
 import getFacetsByType from "@/util/getFacetsByType";
+import { ContextStore } from "@/stores/contextStore";
 import {
   ProductRecommendationResponse,
   ProductSearchBuilder,
@@ -42,19 +42,13 @@ const Component = (props: SearchOverlayProps) => {
   const [maxPrice, setMaxPrice] = React.useState<number | undefined>(
     currentSelectedMaxPrice ? +currentSelectedMaxPrice : undefined
   );
-  const [products, setProducts] = React.useState<
-    ProductSearchResponse | undefined
-  >();
+  const [products, setProducts] = React.useState<ProductSearchResponse | undefined>();
   const [fallbackProducts, setFallbackProducts] = React.useState<
     ProductRecommendationResponse | undefined
   >();
-  const [predictions, setPredictions] = React.useState<
-    SearchTermPredictionResult[]
-  >([]);
+  const [predictions, setPredictions] = React.useState<SearchTermPredictionResult[]>([]);
 
-  const [selectedFacets, setSelectedFacets] = React.useState<
-    Record<string, string[]>
-  >({
+  const [selectedFacets, setSelectedFacets] = React.useState<Record<string, string[]>>({
     Category: currentSelectedSubCategories ?? [],
     Brand: currentSelectedBrands ?? []
   });
@@ -65,12 +59,7 @@ const Component = (props: SearchOverlayProps) => {
   };
 
   const setQueryString = React.useCallback(() => {
-    const facetParams = generateFacetQueryString(
-      searchParams,
-      selectedFacets,
-      minPrice,
-      maxPrice
-    );
+    const facetParams = generateFacetQueryString(searchParams, selectedFacets, minPrice, maxPrice);
 
     router.push("?" + facetParams.toString());
   }, [maxPrice, minPrice, router, searchParams, selectedFacets]);
@@ -101,10 +90,7 @@ const Component = (props: SearchOverlayProps) => {
           .setTerm(props.input.length > 0 ? props.input : null)
           .facets((f) =>
             f
-              .addCategoryFacet(
-                "ImmediateParent",
-                getFacetsByType(selectedFacets, "Category")
-              )
+              .addCategoryFacet("ImmediateParent", getFacetsByType(selectedFacets, "Category"))
               .addBrandFacet(getFacetsByType(selectedFacets, "Brand"))
               .addSalesPriceRangeFacet("Product", minPrice, maxPrice)
           )
@@ -124,16 +110,11 @@ const Component = (props: SearchOverlayProps) => {
       if (response && response.responses) {
         const productResult = response.responses[0] as ProductSearchResponse;
         setProducts(productResult);
-        setPredictions(
-          (response.responses[1] as SearchTermPredictionResponse)
-            ?.predictions ?? []
-        );
+        setPredictions((response.responses[1] as SearchTermPredictionResponse)?.predictions ?? []);
 
         if (productResult.hits < 1) {
           const searchTermBasedProductRecommendationBuilder =
-            new SearchTermBasedProductRecommendationBuilder(
-              contextStore.getDefaultSettings()
-            )
+            new SearchTermBasedProductRecommendationBuilder(contextStore.getDefaultSettings())
               .setSelectedProductProperties(contextStore.getProductSettings())
               .setSelectedVariantProperties({ allData: true })
               .setTerm(props.input)
@@ -142,9 +123,7 @@ const Component = (props: SearchOverlayProps) => {
           const recommender = contextStore.getRecommender();
 
           recommender
-            .recommendSearchTermBasedProducts(
-              searchTermBasedProductRecommendationBuilder.build()
-            )
+            .recommendSearchTermBasedProducts(searchTermBasedProductRecommendationBuilder.build())
             .then((response) => {
               setFallbackProducts(response);
             });
@@ -196,17 +175,13 @@ const Component = (props: SearchOverlayProps) => {
                       </h2>
                       <span v-if="result.hits > 0">
                         Showing {page * pageSize - 29} -{" "}
-                        {products?.hits < pageSize
-                          ? products?.hits
-                          : page * pageSize}{" "}
-                        of {products?.hits}
+                        {products?.hits < pageSize ? products?.hits : page * pageSize} of{" "}
+                        {products?.hits}
                       </span>
                     </div>
                     {products.redirects && products.redirects.length > 0 && (
                       <div className="mb-3 p-3 bg-white">
-                        <h2 className="text-xl font-semibold mb-2">
-                          Redirect(s)
-                        </h2>
+                        <h2 className="text-xl font-semibold mb-2">Redirect(s)</h2>
                         {products.redirects?.map((redirect, index) => (
                           <div
                             key={index}
@@ -218,9 +193,7 @@ const Component = (props: SearchOverlayProps) => {
                       </div>
                     )}
                     {products.hits < 1 ? (
-                      <div className="p-3 text-xl bg-white">
-                        No products found
-                      </div>
+                      <div className="p-3 text-xl bg-white">No products found</div>
                     ) : (
                       <div>
                         <div className="grid gap-3 grid-cols-4">
@@ -248,14 +221,9 @@ const Component = (props: SearchOverlayProps) => {
                         <div className="w-full p-3 bg-white rounded mb-6">
                           <h2 className="text-xl">You may like</h2>
                           <div className="grid gap-3 grid-cols-4">
-                            {fallbackProducts.recommendations?.map(
-                              (fallbackProduct, index) => (
-                                <ProductTile
-                                  key={index}
-                                  product={fallbackProduct}
-                                />
-                              )
-                            )}
+                            {fallbackProducts.recommendations?.map((fallbackProduct, index) => (
+                              <ProductTile key={index} product={fallbackProduct} />
+                            ))}
                           </div>
                         </div>
                       )}

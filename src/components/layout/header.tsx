@@ -2,12 +2,12 @@ import { ShoppingBagIcon } from "@heroicons/react/24/outline";
 import SearchBar from "../searchBar";
 import HeaderCategories from "./headerCategories";
 import { basePath } from "@/util/basePath";
-import HandleShare from "../handleShare";
+import HandleShareLink from "../handleShareLink";
 
 export default function Header() {
   return (
     <header className="bg-white shadow-sm">
-      <HandleShare />
+      <HandleShareLink />
       <div className="container mx-auto">
         <div className="flex gap-10 py-2">
           <div className="flex items-center">

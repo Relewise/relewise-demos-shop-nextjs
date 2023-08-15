@@ -1,5 +1,5 @@
 "use client";
-import { ContextStore } from "@/stores/clientContextStore";
+import { ContextStore } from "@/stores/contextStore";
 import { PopularProductsBuilder, ProductResult } from "@relewise/client";
 import dynamic from "next/dynamic";
 import React, { useEffect } from "react";
