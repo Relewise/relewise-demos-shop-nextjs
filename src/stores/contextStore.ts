@@ -5,7 +5,6 @@ import {
   Settings,
   UserFactory
 } from "@relewise/client";
-import { getCookie, setCookie } from "cookies-next";
 import { AppContext } from "./appContext";
 import { Dataset } from "./dataset";
 
@@ -63,7 +62,7 @@ export class ContextStore {
     });
   }
   getAppContext(): AppContext {
-    const cookie = getCookie("shopContext")?.toString();
+    const cookie = localStorage.getItem("shopContext")?.toString();
 
     if (cookie) {
       const appContextFromCookie: AppContext = JSON.parse(cookie);
@@ -76,7 +75,7 @@ export class ContextStore {
   }
 
   setAppContext(appContext: AppContext) {
-    setCookie("shopContext", JSON.stringify(appContext));
+    localStorage.setItem("shopContext", JSON.stringify(appContext));
   }
 
   saveDataset(dataset: Dataset) {

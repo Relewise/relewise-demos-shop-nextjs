@@ -1,5 +1,6 @@
 "use client";
 import ProductImage from "@/components/product/productImage";
+import { BasketStore } from "@/stores/basketStore";
 import { ContextStore } from "@/stores/contextStore";
 import { ProductResult, ProductSearchBuilder } from "@relewise/client";
 import dynamic from "next/dynamic";
@@ -11,6 +12,12 @@ const Component = () => {
   const id = searchParams.get("Id") ?? "";
 
   const [product, setProduct] = React.useState<ProductResult | undefined>();
+
+  const addProductToBasket = (product: ProductResult) => {
+    const basketStore = new BasketStore();
+
+    basketStore.addProductToBasket(product);
+  };
 
   useEffect(() => {
     const contextStore = new ContextStore();
@@ -57,14 +64,12 @@ const Component = () => {
                     {product.salesPrice}
                   </span>
                   {product.salesPrice !== product.listPrice && (
-                    <span className="text-zinc-900 line-through">
-                      {product.listPrice}
-                    </span>
+                    <span className="text-zinc-900 line-through">{product.listPrice}</span>
                   )}
                 </p>
               </div>
               <div className="text-left mt-3">
-                <button>Add to cart</button>
+                <button onClick={() => addProductToBasket(product)}>Add to cart</button>
               </div>
             </div>
           </div>
