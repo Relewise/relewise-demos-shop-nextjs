@@ -6,8 +6,6 @@ const Component = () => {
   const basketStore = new BasketStore();
   const basket = basketStore.getBasket();
 
-  console.log(basket);
-
   return (
     <div>
       {basket.items.map((item, index) => (

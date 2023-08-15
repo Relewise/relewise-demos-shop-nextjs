@@ -1,22 +1,25 @@
 "use client";
+import { BasketItemCountContext } from "@/app/layout";
 import ProductImage from "@/components/product/productImage";
 import { BasketStore } from "@/stores/basketStore";
 import { ContextStore } from "@/stores/contextStore";
 import { ProductResult, ProductSearchBuilder } from "@relewise/client";
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
-import React, { useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 
 const Component = () => {
   const searchParams = useSearchParams();
   const id = searchParams.get("Id") ?? "";
+  const { setBasketItemCount } = useContext(BasketItemCountContext);
 
-  const [product, setProduct] = React.useState<ProductResult | undefined>();
+  const [product, setProduct] = useState<ProductResult | undefined>();
 
   const addProductToBasket = (product: ProductResult) => {
     const basketStore = new BasketStore();
 
     basketStore.addProductToBasket(product);
+    setBasketItemCount(basketStore.getBasket().items.length);
   };
 
   useEffect(() => {

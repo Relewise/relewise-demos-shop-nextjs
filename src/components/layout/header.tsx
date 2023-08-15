@@ -1,8 +1,8 @@
-import { ShoppingBagIcon } from "@heroicons/react/24/outline";
-import SearchBar from "../searchBar";
-import HeaderCategories from "./headerCategories";
 import { basePath } from "@/util/basePath";
 import HandleShareLink from "../handleShareLink";
+import SearchBar from "../searchBar";
+import CartButton from "./cartButton";
+import HeaderCategories from "./headerCategories";
 
 export default function Header() {
   return (
@@ -15,10 +15,8 @@ export default function Header() {
               href={`${basePath}/`}
               className="font-semibold text-2xl uppercase text-black leading-normal block hover:opacity-70 transitions ease-in-out delay-150"
             >
-              Relewise{" "}
-              <span className="text-white bg-zinc-900 rounded-sm px-1">
-                demo
-              </span>
+              Relewise
+              <span className="text-white bg-zinc-900 rounded-sm px-1">demo</span>
               shop
             </a>
           </div>
@@ -28,15 +26,7 @@ export default function Header() {
           </div>
 
           <div className="flex items-center">
-            <a
-              href="/cart"
-              className="relative rounded-full bg-zinc-100 p-2 text-zinc-600 hover:bg-zinc-200"
-            >
-              <ShoppingBagIcon className="h-8 w-8" />
-              <span className="absolute top-0 right-0 leading-none inline-flex items-center justify-center -mr- h-4 w-4 pb-0.5 bg-blue-500 rounded-full text-white text-[11px]">
-                {/* LINE ITEM COUNT */}0
-              </span>
-            </a>
+            <CartButton />
           </div>
         </div>
       </div>
