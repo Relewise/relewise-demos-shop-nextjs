@@ -82,9 +82,7 @@ export class ContextStore {
   saveDataset(dataset: Dataset) {
     const appContext = this.getAppContext();
     appContext.datasets[appContext.selectedDatasetIndex] = dataset;
-    this.setAppContext(
-      new AppContext(appContext.selectedDatasetIndex, appContext.datasets)
-    );
+    this.setAppContext(new AppContext(appContext.selectedDatasetIndex, appContext.datasets));
   }
 
   addEmptyDataset() {
@@ -92,9 +90,23 @@ export class ContextStore {
     const newDataset = new Dataset();
     appContext.datasets.push(newDataset);
 
-    this.setAppContext(
-      new AppContext(appContext.datasets.length - 1, appContext.datasets)
+    this.setAppContext(new AppContext(appContext.datasets.length - 1, appContext.datasets));
+  }
+
+  addNewDataset(dataset: Dataset) {
+    const appContext = this.getAppContext();
+
+    const existingDatasetsWithSameId = appContext.datasets.find(
+      (d) => d.datasetId == dataset.datasetId
     );
+
+    if (existingDatasetsWithSameId) {
+      this.setSelectedDatasetIndex(appContext.datasets.indexOf(existingDatasetsWithSameId));
+      return;
+    }
+
+    appContext.datasets.push(dataset);
+    this.setAppContext(new AppContext(appContext.datasets.length - 1, appContext.datasets));
   }
 
   setSelectedDatasetIndex(index: number) {

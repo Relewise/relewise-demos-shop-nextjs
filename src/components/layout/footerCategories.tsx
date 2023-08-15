@@ -1,5 +1,5 @@
 "use client";
-import { ContextStore } from "@/stores/clientContextStore";
+import { ContextStore } from "@/stores/contextStore";
 import { getCategories } from "@/util/categoryFetcher";
 import { CategoryHierarchyFacetResultCategoryNode } from "@relewise/client";
 import dynamic from "next/dynamic";

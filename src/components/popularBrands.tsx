@@ -1,5 +1,5 @@
 "use client";
-import { ContextStore } from "@/stores/clientContextStore";
+import { ContextStore } from "@/stores/contextStore";
 import {
   BrandResult,
   PopularBrandsRecommendationBuilder

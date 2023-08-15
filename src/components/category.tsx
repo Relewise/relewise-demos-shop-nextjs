@@ -1,5 +1,5 @@
 "use client";
-import { ContextStore } from "@/stores/clientContextStore";
+import { ContextStore } from "@/stores/contextStore";
 import { Sort } from "@/stores/sort";
 import generateFacetQueryString from "@/util/generateFacetQueryString";
 import getFacetsByType from "@/util/getFacetsByType";

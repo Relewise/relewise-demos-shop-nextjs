@@ -1,4 +1,4 @@
-import { ContextStore } from "@/stores/clientContextStore";
+import { ContextStore } from "@/stores/contextStore";
 import {
   CategoryHierarchyFacetResult,
   CategoryHierarchyFacetResultCategoryNode,

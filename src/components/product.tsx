@@ -1,6 +1,6 @@
 "use client";
 import ProductImage from "@/components/product/productImage";
-import { ContextStore } from "@/stores/clientContextStore";
+import { ContextStore } from "@/stores/contextStore";
 import { ProductResult, ProductSearchBuilder } from "@relewise/client";
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
