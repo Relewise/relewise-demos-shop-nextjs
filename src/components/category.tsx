@@ -1,6 +1,8 @@
 "use client";
 import { ContextStore } from "@/stores/clientContextStore";
 import { Sort } from "@/stores/sort";
+import generateFacetQueryString from "@/util/generateFacetQueryString";
+import getFacetsByType from "@/util/getFacetsByType";
 import {
   CategoryResult,
   ProductCategorySearchBuilder,
@@ -20,14 +22,10 @@ const Component = () => {
   const searchParams = useSearchParams();
   const currentSort = (searchParams.get("Sort") as Sort) ?? Sort.Recommended;
   const currentSelectedBrands = searchParams.get("Brand")?.split(",");
-
   const categoryIds = useCallback(() => {
     return searchParams.get("CategoryIds")?.split(",") ?? [];
   }, [searchParams]);
-
-  const currentSelectedSubCategories = searchParams
-    .get("SubCategory")
-    ?.split(",");
+  const currentSelectedSubCategories = searchParams.get("Category")?.split(",");
   const currentSelectedMinPrice = searchParams.get("MinPrice");
   const currentSelectedMaxPrice = searchParams.get("MaxPrice");
 
@@ -45,82 +43,34 @@ const Component = () => {
   const [maxPrice, setMaxPrice] = useState<number | undefined>(
     currentSelectedMaxPrice ? +currentSelectedMaxPrice : undefined
   );
-
   const [sort, setSort] = useState<Sort>(currentSort);
   const [page, setPage] = useState(1);
   const pageSize = 40;
 
-  const getFacetsByType = useCallback(
-    (type: string) => {
-      if (!selectedFacets[type] || selectedFacets[type].length < 1) {
-        return null;
-      }
-      return selectedFacets[type];
-    },
-    [selectedFacets]
-  );
-
   const setQueryString = useCallback(() => {
-    const params = new URLSearchParams(searchParams.toString());
-    const categoryFacets = getFacetsByType("SubCategory");
-    const brandFacets = getFacetsByType("Brand");
+    const facetParams = generateFacetQueryString(
+      searchParams,
+      selectedFacets,
+      minPrice,
+      maxPrice
+    );
 
-    params.set("CategoryIds", categoryIds().toString());
-
-    if (categoryFacets && categoryFacets.length > 0) {
-      params.set("SubCategory", categoryFacets.toString());
-    }
-
-    if (brandFacets && brandFacets.length > 0) {
-      params.set("Brand", brandFacets.toString());
-    }
-
-    if (minPrice) {
-      params.set("MinPrice", minPrice.toString());
-    }
-
-    if (maxPrice) {
-      params.set("MaxPrice", maxPrice.toString());
-    }
-
-    params.set("Sort", sort);
-    router.push("?" + params.toString());
+    facetParams.set("CategoryIds", categoryIds().toString());
+    facetParams.set("Sort", sort);
+    router.push("?" + facetParams.toString());
   }, [
     categoryIds,
-    getFacetsByType,
     maxPrice,
     minPrice,
     router,
     searchParams,
+    selectedFacets,
     sort
   ]);
-
-  function goToPage(page: number) {
-    setPage(page);
-    window.scrollTo(0, 0);
-  }
 
   function onSortChange(e: ChangeEvent<HTMLSelectElement>) {
     const sortBy = e.target.value as Sort;
     setSort(sortBy);
-  }
-
-  function setFacet(type: string, value: string) {
-    const currentSelectFacetValues = getFacetsByType(type);
-    const valueAlreadySelected =
-      (currentSelectFacetValues?.find((v) => v === value)?.length ?? 0) > 0;
-
-    if (valueAlreadySelected) {
-      const newSelectFacets = { ...selectedFacets };
-      const indexToRemove = newSelectFacets[type].indexOf(value);
-      newSelectFacets[type].splice(indexToRemove, 1);
-      setSelectedFacets(newSelectFacets);
-      return;
-    }
-
-    const newSelectFacets = { ...selectedFacets };
-    newSelectFacets[type].push(value);
-    setSelectedFacets(newSelectFacets);
   }
 
   useEffect(() => {
@@ -167,8 +117,11 @@ const Component = () => {
       })
       .facets((f) =>
         f
-          .addCategoryFacet("ImmediateParent", getFacetsByType("Category"))
-          .addBrandFacet(getFacetsByType("Brand"))
+          .addCategoryFacet(
+            "ImmediateParent",
+            getFacetsByType(selectedFacets, "Category")
+          )
+          .addBrandFacet(getFacetsByType(selectedFacets, "Brand"))
           .addSalesPriceRangeFacet("Product", minPrice, maxPrice)
       )
       .pagination((p) => p.setPageSize(40).setPage(page))
@@ -207,8 +160,7 @@ const Component = () => {
     maxPrice,
     contextStore,
     setQueryString,
-    categoryIds,
-    getFacetsByType
+    categoryIds
   ]);
 
   return (
@@ -217,8 +169,9 @@ const Component = () => {
         <div className="w-1/5">
           {products?.facets && (
             <Facets
+              selectedFacets={selectedFacets}
+              setSelectedFacets={setSelectedFacets}
               facets={products?.facets}
-              setFacet={setFacet}
               minPrice={minPrice}
               maxPrice={maxPrice}
               setMinPrice={setMinPrice}
@@ -258,7 +211,10 @@ const Component = () => {
                   currentPage={page}
                   total={products.hits}
                   pageSize={pageSize}
-                  goToPage={goToPage}
+                  goToPage={(newPage) => {
+                    setPage(newPage);
+                    window.scrollTo(0, 0);
+                  }}
                 />
               </div>
             </div>

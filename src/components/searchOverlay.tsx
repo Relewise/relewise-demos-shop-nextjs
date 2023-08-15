@@ -1,5 +1,7 @@
 "use client";
 import { ContextStore } from "@/stores/clientContextStore";
+import generateFacetQueryString from "@/util/generateFacetQueryString";
+import getFacetsByType from "@/util/getFacetsByType";
 import {
   ProductRecommendationResponse,
   ProductSearchBuilder,
@@ -10,12 +12,14 @@ import {
   SearchTermPredictionResponse,
   SearchTermPredictionResult
 } from "@relewise/client";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import dynamic from "next/dynamic";
+import { useRouter, useSearchParams } from "next/navigation";
 import * as React from "react";
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
+import Facets from "./facets";
+import Pagination from "./pagination";
 import ProductTile from "./product/productTile";
-import dynamic from "next/dynamic";
 
 interface SearchOverlayProps {
   input: string;
@@ -23,6 +27,21 @@ interface SearchOverlayProps {
 }
 
 const Component = (props: SearchOverlayProps) => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pageSize = 28;
+
+  const currentSelectedBrands = searchParams.get("Brand")?.split(",");
+  const currentSelectedSubCategories = searchParams.get("Category")?.split(",");
+  const currentSelectedMinPrice = searchParams.get("MinPrice");
+  const currentSelectedMaxPrice = searchParams.get("MaxPrice");
+
+  const [minPrice, setMinPrice] = React.useState<number | undefined>(
+    currentSelectedMinPrice ? +currentSelectedMinPrice : undefined
+  );
+  const [maxPrice, setMaxPrice] = React.useState<number | undefined>(
+    currentSelectedMaxPrice ? +currentSelectedMaxPrice : undefined
+  );
   const [products, setProducts] = React.useState<
     ProductSearchResponse | undefined
   >();
@@ -32,13 +51,29 @@ const Component = (props: SearchOverlayProps) => {
   const [predictions, setPredictions] = React.useState<
     SearchTermPredictionResult[]
   >([]);
+
+  const [selectedFacets, setSelectedFacets] = React.useState<
+    Record<string, string[]>
+  >({
+    Category: currentSelectedSubCategories ?? [],
+    Brand: currentSelectedBrands ?? []
+  });
   const [page, setPage] = React.useState(1);
-  const router = useRouter();
-  const pathname = usePathname();
 
   const isSearching = () => {
     return props.input.length > 0;
   };
+
+  const setQueryString = React.useCallback(() => {
+    const facetParams = generateFacetQueryString(
+      searchParams,
+      selectedFacets,
+      minPrice,
+      maxPrice
+    );
+
+    router.push("?" + facetParams.toString());
+  }, [maxPrice, minPrice, router, searchParams, selectedFacets]);
 
   useEffect(() => {
     const contextStore = new ContextStore();
@@ -57,14 +92,23 @@ const Component = (props: SearchOverlayProps) => {
     }
 
     mainContainer.classList.add("hidden");
-
+    setQueryString();
     const searchCollectionBuilder = new SearchCollectionBuilder()
       .addRequest(
         new ProductSearchBuilder(contextStore.getDefaultSettings())
           .setSelectedProductProperties(contextStore.getProductSettings())
           .setSelectedVariantProperties({ allData: true })
           .setTerm(props.input.length > 0 ? props.input : null)
-          .pagination((p) => p.setPageSize(30).setPage(page))
+          .facets((f) =>
+            f
+              .addCategoryFacet(
+                "ImmediateParent",
+                getFacetsByType(selectedFacets, "Category")
+              )
+              .addBrandFacet(getFacetsByType(selectedFacets, "Brand"))
+              .addSalesPriceRangeFacet("Product", minPrice, maxPrice)
+          )
+          .pagination((p) => p.setPageSize(pageSize).setPage(page))
           .build()
       )
       .addRequest(
@@ -107,7 +151,7 @@ const Component = (props: SearchOverlayProps) => {
         }
       }
     });
-  }, [page, props.input]);
+  }, [maxPrice, minPrice, page, props.input, selectedFacets, setQueryString]);
 
   return isSearching() && document != undefined
     ? createPortal(
@@ -133,6 +177,17 @@ const Component = (props: SearchOverlayProps) => {
                         ))}
                       </div>
                     )}
+                    {products?.facets && (
+                      <Facets
+                        facets={products?.facets}
+                        selectedFacets={selectedFacets}
+                        setSelectedFacets={setSelectedFacets}
+                        minPrice={minPrice}
+                        maxPrice={maxPrice}
+                        setMinPrice={setMinPrice}
+                        setMaxPrice={setMaxPrice}
+                      />
+                    )}
                   </div>
                   <div className="w-4/5">
                     <div className="flex gap-6 items-end p-3 bg-white rounded mb-3">
@@ -140,9 +195,11 @@ const Component = (props: SearchOverlayProps) => {
                         Showing results for <strong>{props.input}</strong>
                       </h2>
                       <span v-if="result.hits > 0">
-                        Showing {page * 30 - 29} -{" "}
-                        {products?.hits < 30 ? products?.hits : page * 30} of{" "}
-                        {products?.hits}
+                        Showing {page * pageSize - 29} -{" "}
+                        {products?.hits < pageSize
+                          ? products?.hits
+                          : page * pageSize}{" "}
+                        of {products?.hits}
                       </span>
                     </div>
                     {products.redirects && products.redirects.length > 0 && (
@@ -165,10 +222,23 @@ const Component = (props: SearchOverlayProps) => {
                         No products found
                       </div>
                     ) : (
-                      <div className="grid gap-3 grid-cols-4">
-                        {products?.results?.map((product, index) => (
-                          <ProductTile key={index} product={product} />
-                        ))}
+                      <div>
+                        <div className="grid gap-3 grid-cols-4">
+                          {products?.results?.map((product, index) => (
+                            <ProductTile key={index} product={product} />
+                          ))}
+                        </div>
+                        <div className="py-3 flex justify-center">
+                          <Pagination
+                            currentPage={page}
+                            total={products.hits}
+                            pageSize={pageSize}
+                            goToPage={(newPage) => {
+                              setPage(newPage);
+                              window.scrollTo(0, 0);
+                            }}
+                          />
+                        </div>
                       </div>
                     )}
 
