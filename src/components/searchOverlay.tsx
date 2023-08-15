@@ -1,5 +1,7 @@
 "use client";
 import { ContextStore } from "@/stores/clientContextStore";
+import generateFacetQueryString from "@/util/generateFacetQueryString";
+import getFacetsByType from "@/util/getFacetsByType";
 import {
   ProductRecommendationResponse,
   ProductSearchBuilder,
@@ -11,15 +13,13 @@ import {
   SearchTermPredictionResult
 } from "@relewise/client";
 import dynamic from "next/dynamic";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import * as React from "react";
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
 import Facets from "./facets";
 import Pagination from "./pagination";
 import ProductTile from "./product/productTile";
-import { useRouter } from "next/navigation";
-import getFacetsByType from "@/util/getFacetsByType";
 
 interface SearchOverlayProps {
   input: string;
@@ -64,41 +64,15 @@ const Component = (props: SearchOverlayProps) => {
     return props.input.length > 0;
   };
 
-  function goToPage(page: number) {
-    setPage(page);
-    window.scrollTo(0, 0);
-  }
-
   const setQueryString = React.useCallback(() => {
-    const params = new URLSearchParams(searchParams.toString());
-    const categoryFacets = getFacetsByType(selectedFacets, "Category");
-    const brandFacets = getFacetsByType(selectedFacets, "Brand");
+    const facetParams = generateFacetQueryString(
+      searchParams,
+      selectedFacets,
+      minPrice,
+      maxPrice
+    );
 
-    if (categoryFacets) {
-      params.set("Category", categoryFacets.toString());
-    } else {
-      params.delete("Category");
-    }
-
-    if (brandFacets) {
-      params.set("Brand", brandFacets.toString());
-    } else {
-      params.delete("Brand");
-    }
-
-    if (minPrice) {
-      params.set("MinPrice", minPrice.toString());
-    } else {
-      params.delete("MinPrice");
-    }
-
-    if (maxPrice) {
-      params.set("MaxPrice", maxPrice.toString());
-    } else {
-      params.delete("MaxPrice");
-    }
-
-    router.push("?" + params.toString());
+    router.push("?" + facetParams.toString());
   }, [maxPrice, minPrice, router, searchParams, selectedFacets]);
 
   useEffect(() => {
@@ -259,7 +233,10 @@ const Component = (props: SearchOverlayProps) => {
                             currentPage={page}
                             total={products.hits}
                             pageSize={pageSize}
-                            goToPage={goToPage}
+                            goToPage={(newPage) => {
+                              setPage(newPage);
+                              window.scrollTo(0, 0);
+                            }}
                           />
                         </div>
                       </div>

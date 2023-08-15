@@ -1,6 +1,8 @@
 "use client";
 import { ContextStore } from "@/stores/clientContextStore";
 import { Sort } from "@/stores/sort";
+import generateFacetQueryString from "@/util/generateFacetQueryString";
+import getFacetsByType from "@/util/getFacetsByType";
 import {
   CategoryResult,
   ProductCategorySearchBuilder,
@@ -13,7 +15,6 @@ import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import Facets from "./facets";
 import Pagination from "./pagination";
 import ProductTile from "./product/productTile";
-import getFacetsByType from "@/util/getFacetsByType";
 
 const Component = () => {
   const contextStore = useCallback(() => new ContextStore(), []);
@@ -47,38 +48,16 @@ const Component = () => {
   const pageSize = 40;
 
   const setQueryString = useCallback(() => {
-    const params = new URLSearchParams(searchParams.toString());
-    const categoryFacets = getFacetsByType(selectedFacets, "Category");
-    const brandFacets = getFacetsByType(selectedFacets, "Brand");
+    const facetParams = generateFacetQueryString(
+      searchParams,
+      selectedFacets,
+      minPrice,
+      maxPrice
+    );
 
-    params.set("CategoryIds", categoryIds().toString());
-
-    if (categoryFacets) {
-      params.set("Category", categoryFacets.toString());
-    } else {
-      params.delete("Category");
-    }
-
-    if (brandFacets) {
-      params.set("Brand", brandFacets.toString());
-    } else {
-      params.delete("Brand");
-    }
-
-    if (minPrice) {
-      params.set("MinPrice", minPrice.toString());
-    } else {
-      params.delete("MinPrice");
-    }
-
-    if (maxPrice) {
-      params.set("MaxPrice", maxPrice.toString());
-    } else {
-      params.delete("MaxPrice");
-    }
-
-    params.set("Sort", sort);
-    router.push("?" + params.toString());
+    facetParams.set("CategoryIds", categoryIds().toString());
+    facetParams.set("Sort", sort);
+    router.push("?" + facetParams.toString());
   }, [
     categoryIds,
     maxPrice,
@@ -88,11 +67,6 @@ const Component = () => {
     selectedFacets,
     sort
   ]);
-
-  function goToPage(page: number) {
-    setPage(page);
-    window.scrollTo(0, 0);
-  }
 
   function onSortChange(e: ChangeEvent<HTMLSelectElement>) {
     const sortBy = e.target.value as Sort;
@@ -237,7 +211,10 @@ const Component = () => {
                   currentPage={page}
                   total={products.hits}
                   pageSize={pageSize}
-                  goToPage={goToPage}
+                  goToPage={(newPage) => {
+                    setPage(newPage);
+                    window.scrollTo(0, 0);
+                  }}
                 />
               </div>
             </div>
