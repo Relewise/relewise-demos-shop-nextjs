@@ -19,6 +19,7 @@ import Facets from "./facets";
 import Pagination from "./pagination";
 import ProductTile from "./product/productTile";
 import { useRouter } from "next/navigation";
+import getFacetsByType from "@/util/getFacetsByType";
 
 interface SearchOverlayProps {
   input: string;
@@ -68,38 +69,10 @@ const Component = (props: SearchOverlayProps) => {
     window.scrollTo(0, 0);
   }
 
-  const getFacetsByType = React.useCallback(
-    (type: string) => {
-      if (!selectedFacets[type] || selectedFacets[type].length < 1) {
-        return null;
-      }
-      return selectedFacets[type];
-    },
-    [selectedFacets]
-  );
-
-  function setFacet(type: string, value: string) {
-    const currentSelectFacetValues = getFacetsByType(type);
-    const valueAlreadySelected =
-      (currentSelectFacetValues?.find((v) => v === value)?.length ?? 0) > 0;
-
-    if (valueAlreadySelected) {
-      const newSelectFacets = { ...selectedFacets };
-      const indexToRemove = newSelectFacets[type].indexOf(value);
-      newSelectFacets[type].splice(indexToRemove, 1);
-      setSelectedFacets(newSelectFacets);
-      return;
-    }
-
-    const newSelectFacets = { ...selectedFacets };
-    newSelectFacets[type].push(value);
-    setSelectedFacets(newSelectFacets);
-  }
-
   const setQueryString = React.useCallback(() => {
     const params = new URLSearchParams(searchParams.toString());
-    const categoryFacets = getFacetsByType("Category");
-    const brandFacets = getFacetsByType("Brand");
+    const categoryFacets = getFacetsByType(selectedFacets, "Category");
+    const brandFacets = getFacetsByType(selectedFacets, "Brand");
 
     if (categoryFacets) {
       params.set("Category", categoryFacets.toString());
@@ -126,7 +99,7 @@ const Component = (props: SearchOverlayProps) => {
     }
 
     router.push("?" + params.toString());
-  }, [getFacetsByType, maxPrice, minPrice, router, searchParams]);
+  }, [maxPrice, minPrice, router, searchParams, selectedFacets]);
 
   useEffect(() => {
     const contextStore = new ContextStore();
@@ -154,8 +127,11 @@ const Component = (props: SearchOverlayProps) => {
           .setTerm(props.input.length > 0 ? props.input : null)
           .facets((f) =>
             f
-              .addCategoryFacet("ImmediateParent", getFacetsByType("Category"))
-              .addBrandFacet(getFacetsByType("Brand"))
+              .addCategoryFacet(
+                "ImmediateParent",
+                getFacetsByType(selectedFacets, "Category")
+              )
+              .addBrandFacet(getFacetsByType(selectedFacets, "Brand"))
               .addSalesPriceRangeFacet("Product", minPrice, maxPrice)
           )
           .pagination((p) => p.setPageSize(pageSize).setPage(page))
@@ -201,7 +177,7 @@ const Component = (props: SearchOverlayProps) => {
         }
       }
     });
-  }, [getFacetsByType, maxPrice, minPrice, page, props.input, setQueryString]);
+  }, [maxPrice, minPrice, page, props.input, selectedFacets, setQueryString]);
 
   return isSearching() && document != undefined
     ? createPortal(
@@ -230,7 +206,8 @@ const Component = (props: SearchOverlayProps) => {
                     {products?.facets && (
                       <Facets
                         facets={products?.facets}
-                        setFacet={setFacet}
+                        selectedFacets={selectedFacets}
+                        setSelectedFacets={setSelectedFacets}
                         minPrice={minPrice}
                         maxPrice={maxPrice}
                         setMinPrice={setMinPrice}
