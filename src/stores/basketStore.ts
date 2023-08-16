@@ -27,7 +27,7 @@ export class BasketStore {
         if (item.product.productId === product.productId) {
           item.quantity = item.quantity + 1;
         }
-        return item as BasketItem;
+        return item;
       });
 
       this.setBasket(basket);
@@ -35,6 +35,40 @@ export class BasketStore {
     }
 
     basket.items.push(new BasketItem(product, 1));
+    this.setBasket(basket);
+  }
+
+  updateProductInBasket(product: ProductResult, quantity: number) {
+    const basket = this.getBasket();
+
+    if (quantity < 1) {
+      this.removeProductFromBasket(product);
+      return;
+    }
+
+    const itemAlreadyInBasket = basket.items.find((i) => i.product.productId === product.productId);
+    if (!itemAlreadyInBasket) {
+      return;
+    }
+
+    basket.items.map((item) => {
+      if (item.product.productId === product.productId) {
+        item.product = product;
+        item.quantity = quantity;
+      }
+      return item;
+    });
+
+    this.setBasket(basket);
+  }
+
+  removeProductFromBasket(product: ProductResult) {
+    const basket = this.getBasket();
+
+    basket.items = basket.items.filter((item) => {
+      return item.product.productId !== product.productId;
+    });
+
     this.setBasket(basket);
   }
 }
