@@ -5,6 +5,7 @@ import { BasketStore } from "@/stores/basketStore";
 import { ProductResult } from "@relewise/client";
 import dynamic from "next/dynamic";
 import { useContext, useState } from "react";
+import ProductImage from "./product/productImage";
 
 const Component = () => {
   const basketStore = new BasketStore();
@@ -31,7 +32,7 @@ const Component = () => {
               key={index}
               className="justify-between mb-3 rounded bg-white p-3 sm:flex sm:justify-start"
             >
-              {/* <ProductImage product={item.product} /> */}
+              <ProductImage product={item.product} className="w-full rounded sm:w-20" />
               <div className="sm:ml-4 sm:flex sm:w-full sm:justify-between">
                 <div className="mt-5 sm:mt-0">
                   <h2 className="text-lg font-semibold text-gray-900">
