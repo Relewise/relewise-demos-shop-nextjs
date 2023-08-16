@@ -1,5 +1,4 @@
 import { ProductResult } from "@relewise/client";
-import { createContext, useContext } from "react";
 import { Basket, BasketItem } from "./basket";
 
 export class BasketStore {
@@ -65,9 +64,12 @@ export class BasketStore {
   removeProductFromBasket(product: ProductResult) {
     const basket = this.getBasket();
 
-    basket.items = basket.items.filter((item) => {
-      return item.product.productId !== product.productId;
-    });
+    const itemInBasket = basket.items.find((i) => i.product.productId === product.productId);
+    if (!itemInBasket) {
+      return;
+    }
+
+    basket.items.splice(basket.items.indexOf(itemInBasket), 1);
 
     this.setBasket(basket);
   }
