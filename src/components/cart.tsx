@@ -25,7 +25,7 @@ const Component = () => {
   }
 
   function checkout() {
-    basketStore.setBasket(new Basket());
+    basketStore.clearBasket();
     const newBasket = basketStore.getBasket();
     setBasketItemCount(newBasket.items.length);
     setBasket(newBasket);

@@ -2,7 +2,7 @@ import { ProductResult } from "@relewise/client";
 import { Basket, BasketItem } from "./basket";
 
 export class BasketStore {
-  setBasket(basket: Basket) {
+  private setBasket(basket: Basket) {
     localStorage.setItem("basket", JSON.stringify(basket));
   }
 
@@ -72,5 +72,9 @@ export class BasketStore {
     basket.items.splice(basket.items.indexOf(itemInBasket), 1);
 
     this.setBasket(basket);
+  }
+
+  clearBasket() {
+    this.setBasket(new Basket());
   }
 }

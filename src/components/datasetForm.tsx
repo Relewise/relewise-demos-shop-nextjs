@@ -1,21 +1,29 @@
 "use client";
+import { BasketItemCountContext } from "@/app/layout";
+import { BasketStore } from "@/stores/basketStore";
 import { ContextStore } from "@/stores/contextStore";
 import { Dataset } from "@/stores/dataset";
 import dynamic from "next/dynamic";
-import React from "react";
+import React, { useContext } from "react";
 
 const Component = () => {
   const contextStore = new ContextStore();
+  const basketStore = new BasketStore();
 
   const [saved, setSaved] = React.useState(false);
-  const [dataset, setDataset] = React.useState<Dataset>(
-    contextStore.getSelectedDataset()
-  );
+  const [dataset, setDataset] = React.useState<Dataset>(contextStore.getSelectedDataset());
 
   function saveSettings() {
     contextStore.saveDataset(dataset);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
+  }
+
+  const { setBasketItemCount } = useContext(BasketItemCountContext);
+
+  function clearBasket() {
+    basketStore.clearBasket();
+    setBasketItemCount(basketStore.getBasket().items.length);
   }
 
   return (
@@ -32,6 +40,7 @@ const Component = () => {
               onClick={() => {
                 contextStore.addEmptyDataset();
                 setDataset(contextStore.getSelectedDataset());
+                clearBasket();
               }}
             >
               Add new dataset
@@ -44,6 +53,7 @@ const Component = () => {
                 onChange={(e) => {
                   contextStore.setSelectedDatasetIndex(+e.target.value);
                   setDataset(contextStore.getSelectedDataset());
+                  clearBasket();
                 }}
               >
                 {contextStore.getAppContext().datasets.map((dataset, index) => (
@@ -90,6 +100,7 @@ const Component = () => {
           type="text"
           placeholder="Dataset id"
           onChange={(e) => {
+            clearBasket();
             const datasetId = e.target.value;
             setDataset({
               ...dataset,
@@ -159,11 +170,7 @@ const Component = () => {
         <div>
           <button onClick={saveSettings}>Save</button>
 
-          {saved && (
-            <span className="ml-4 text-green-600">
-              Settings have been saved.
-            </span>
-          )}
+          {saved && <span className="ml-4 text-green-600">Settings have been saved.</span>}
         </div>
       </div>
     </div>
