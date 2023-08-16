@@ -21,6 +21,13 @@ const Component = () => {
     setBasket(newBasket);
   }
 
+  function checkout() {
+    basketStore.setBasket(new Basket());
+    const newBasket = basketStore.getBasket();
+    setBasketItemCount(newBasket.items.length);
+    setBasket(newBasket);
+  }
+
   return (
     <div>
       <h1 className="mb-3 text-4xl font-semibold">Cart</h1>
@@ -106,7 +113,7 @@ const Component = () => {
               <p className="text-sm text-gray-700">including VAT</p>
             </div>
           </div>
-          <button>Check out</button>
+          <button onClick={checkout}>Check out</button>
         </div>
       </div>
     </div>
@@ -118,6 +125,3 @@ const Cart = dynamic(() => Promise.resolve(Component), {
 });
 
 export default Cart;
-function userState(basket: Basket): [any, any] {
-  throw new Error("Function not implemented.");
-}
