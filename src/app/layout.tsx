@@ -14,10 +14,6 @@ export const BasketItemCountContext = createContext({
   setBasketItemCount: (itemCount: number) => {}
 });
 
-export const metadata: Metadata = {
-  title: "Relewise Demo Shop"
-};
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const [basketItemCount, setBasketItemCount] = useState(0);
   const value = { basketItemCount, setBasketItemCount };

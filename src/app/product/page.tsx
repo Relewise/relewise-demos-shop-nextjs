@@ -1,6 +1,9 @@
 import Product from "@/components/product";
 import ProductDetailsRecomendations from "@/components/productDetailsRecomendations";
-
+import { Metadata } from "next";
+export const metadata: Metadata = {
+  title: "Relewise Demo Shop"
+};
 export default function ProductPage() {
   return (
     <>
