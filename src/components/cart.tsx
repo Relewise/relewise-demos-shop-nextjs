@@ -2,10 +2,12 @@
 import { BasketItemCountContext } from "@/app/layout";
 import { Basket, BasketItem } from "@/stores/basket";
 import { BasketStore } from "@/stores/basketStore";
-import { ProductResult } from "@relewise/client";
+import { ProductResult, PurchasedWithCurrentCartBuilder } from "@relewise/client";
 import dynamic from "next/dynamic";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import ProductImage from "./product/productImage";
+import { ContextStore } from "@/stores/contextStore";
+import ProductTile from "./product/productTile";
 
 const Component = () => {
   const basketStore = new BasketStore();
@@ -13,6 +15,7 @@ const Component = () => {
 
   const { setBasketItemCount } = useContext(BasketItemCountContext);
   const [basket, setBasket] = useState<Basket>(initialBasket);
+  const [recommendations, setRecommendations] = useState<ProductResult[]>([]);
 
   function updateBasket(product: ProductResult, quantity: number) {
     basketStore.updateProductInBasket(product, quantity);
@@ -27,6 +30,26 @@ const Component = () => {
     setBasketItemCount(newBasket.items.length);
     setBasket(newBasket);
   }
+
+  useEffect(() => {
+    if (basket.items.length < 1) {
+      return;
+    }
+    const contextStore = new ContextStore();
+
+    const request = new PurchasedWithCurrentCartBuilder(contextStore.getDefaultSettings())
+      .setSelectedProductProperties(contextStore.getProductSettings())
+      .setSelectedVariantProperties({ allData: true })
+      .setNumberOfRecommendations(5)
+      .build();
+
+    const recommender = contextStore.getRecommender();
+    recommender.recommendPurchasedWithCurrentCart(request).then((result) => {
+      if (result) {
+        setRecommendations(result.recommendations ?? []);
+      }
+    });
+  }, [basket.items.length]);
 
   return (
     <div>
@@ -116,6 +139,16 @@ const Component = () => {
           <button onClick={checkout}>Check out</button>
         </div>
       </div>
+      {recommendations.length > 0 && (
+        <>
+          <h2 className="text-2xl font-semibold">Recommendations</h2>
+          {recommendations.map((product) => {
+            <div className="grid gap-3 grid-cols-5 mt-3">
+              <ProductTile product={product} />
+            </div>;
+          })}
+        </>
+      )}
     </div>
   );
 };
