@@ -98,7 +98,11 @@ const Component = () => {
           <div className="flex justify-between">
             <p className="text-lg font-bold">Total</p>
             <div>
-              <p className="mb-1 text-lg font-bold">{0}</p>
+              <p className="mb-1 text-lg font-bold">
+                {basket.items
+                  .map((x) => (x.product.salesPrice ?? 0) * x.quantity)
+                  .reduce((partialSum, a) => partialSum + a, 0)}
+              </p>
               <p className="text-sm text-gray-700">including VAT</p>
             </div>
           </div>
