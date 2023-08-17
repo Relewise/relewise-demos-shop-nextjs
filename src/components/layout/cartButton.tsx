@@ -2,6 +2,7 @@
 import { useContext } from "react";
 import { ShoppingBagIcon } from "@heroicons/react/24/outline";
 import { BasketItemCountContext } from "@/app/layout";
+import { basePath } from "@/util/basePath";
 
 export default function CartButton() {
   const { basketItemCount } = useContext(BasketItemCountContext);
@@ -9,7 +10,7 @@ export default function CartButton() {
   return (
     <>
       <a
-        href="/cart"
+        href={`${basePath}"/cart"`}
         className="relative rounded-full bg-zinc-100 p-2 text-zinc-600 hover:bg-zinc-200"
       >
         <ShoppingBagIcon className="h-8 w-8" />
