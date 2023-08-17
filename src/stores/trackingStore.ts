@@ -99,19 +99,6 @@ export class TrackingStore {
     });
   }
 
-  trackSearchTerm(term: string) {
-    if (!this.getTracking().enabled) return;
-
-    const contextStore = new ContextStore();
-
-    const tracker = contextStore.getTracker();
-    tracker.trackSearchTerm({
-      term: term,
-      language: contextStore.getSelectedDataset().language,
-      user: this.getUser()
-    });
-  }
-
   private mapToLineItems(basket: Basket) {
     const lineItems = basket.items
       .filter((item) => item.product.productId)

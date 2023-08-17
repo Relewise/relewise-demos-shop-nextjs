@@ -113,8 +113,6 @@ const Component = (props: SearchOverlayProps) => {
         setProducts(productResult);
         setPredictions((response.responses[1] as SearchTermPredictionResponse)?.predictions ?? []);
 
-        new TrackingStore().trackSearchTerm(props.input);
-
         if (productResult.hits < 1) {
           const searchTermBasedProductRecommendationBuilder =
             new SearchTermBasedProductRecommendationBuilder(contextStore.getDefaultSettings())
