@@ -3,16 +3,16 @@ import { Basket, BasketItem } from "./basket";
 
 export class BasketStore {
   private setBasket(basket: Basket) {
-    localStorage.setItem("basket", JSON.stringify(basket));
+    localStorage.setItem("nextjs-basket", JSON.stringify(basket));
   }
 
   getBasket(): Basket {
-    const localStorageBasket = localStorage.getItem("basket")?.toString();
+    const storage = localStorage.getItem("nextjs-basket")?.toString();
 
-    if (!localStorageBasket) {
+    if (!storage) {
       return new Basket();
     }
-    const basketFromStorage: Basket = JSON.parse(localStorageBasket);
+    const basketFromStorage: Basket = JSON.parse(storage);
     return basketFromStorage;
   }
 

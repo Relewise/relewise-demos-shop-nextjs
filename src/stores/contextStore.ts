@@ -61,11 +61,12 @@ export class ContextStore {
       serverUrl: selectedDataset.serverUrl
     });
   }
-  getAppContext(): AppContext {
-    const cookie = localStorage.getItem("shopContext")?.toString();
 
-    if (cookie) {
-      const appContextFromCookie: AppContext = JSON.parse(cookie);
+  getAppContext(): AppContext {
+    const storage = localStorage.getItem("nextjs-shopContext")?.toString();
+
+    if (storage) {
+      const appContextFromCookie: AppContext = JSON.parse(storage);
       return appContextFromCookie;
     }
 
@@ -75,7 +76,7 @@ export class ContextStore {
   }
 
   setAppContext(appContext: AppContext) {
-    localStorage.setItem("shopContext", JSON.stringify(appContext));
+    localStorage.setItem("nextjs-shopContext", JSON.stringify(appContext));
   }
 
   saveDataset(dataset: Dataset) {
