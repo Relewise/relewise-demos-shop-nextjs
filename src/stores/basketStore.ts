@@ -22,9 +22,7 @@ export class BasketStore {
     const itemAlreadyInBasket = basket.items.find((i) => i.product.productId === product.productId);
 
     if (itemAlreadyInBasket) {
-      var index = basket.items.indexOf(itemAlreadyInBasket);
-
-      basket.items[index].quantity = basket.items[index].quantity + 1;
+      itemAlreadyInBasket.quantity = itemAlreadyInBasket.quantity + 1;
 
       this.setBasket(basket);
       return;
@@ -47,10 +45,8 @@ export class BasketStore {
       return;
     }
 
-    var index = basket.items.indexOf(itemAlreadyInBasket);
-
-    basket.items[index].product = product;
-    basket.items[index].quantity = quantity;
+    itemAlreadyInBasket.product = product;
+    itemAlreadyInBasket.quantity = quantity;
 
     this.setBasket(basket);
   }
