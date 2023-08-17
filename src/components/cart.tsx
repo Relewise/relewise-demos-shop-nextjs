@@ -23,7 +23,7 @@ const Component = () => {
   const [basket, setBasket] = useState<Basket>(initialBasket);
   const [recommendations, setRecommendations] = useState<ProductResult[]>([]);
 
-  const userHasAcceptedTracking = false;
+  const userHasAcceptedTracking = new TrackingStore().getTracking().enabled;
 
   function updateBasket(product: ProductResult, quantity: number) {
     basketStore.updateProductInBasket(product, quantity);
