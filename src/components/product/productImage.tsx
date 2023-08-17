@@ -4,6 +4,7 @@ import Image from "next/image";
 
 interface ProductImageProps {
   product: ProductResult;
+  className?: string;
 }
 
 export default function ProductImage(props: ProductImageProps) {
@@ -25,9 +26,7 @@ export default function ProductImage(props: ProductImageProps) {
 
   const image = () => {
     return (
-      mapDataKey(props.product.data ?? {}) ??
-      mapDataKey(props.product.variant?.data ?? {}) ??
-      ""
+      mapDataKey(props.product.data ?? {}) ?? mapDataKey(props.product.variant?.data ?? {}) ?? ""
     );
   };
 
@@ -36,7 +35,7 @@ export default function ProductImage(props: ProductImageProps) {
       {image() ? (
         <Image
           unoptimized
-          className="object-cover h-full w-full"
+          className={props.className ? props.className : "object-cover h-full w-full"}
           src={image()}
           alt="product image"
           width={0}
