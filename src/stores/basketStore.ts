@@ -7,13 +7,13 @@ export class BasketStore {
   }
 
   getBasket(): Basket {
-    const cookie = localStorage.getItem("basket")?.toString();
+    const localStorageBasket = localStorage.getItem("basket")?.toString();
 
-    if (!cookie) {
+    if (!localStorageBasket) {
       return new Basket();
     }
-    const basketFromCookie: Basket = JSON.parse(cookie);
-    return basketFromCookie;
+    const basketFromStorage: Basket = JSON.parse(localStorageBasket);
+    return basketFromStorage;
   }
 
   addProductToBasket(product: ProductResult) {
@@ -22,12 +22,9 @@ export class BasketStore {
     const itemAlreadyInBasket = basket.items.find((i) => i.product.productId === product.productId);
 
     if (itemAlreadyInBasket) {
-      basket.items.map((item) => {
-        if (item.product.productId === product.productId) {
-          item.quantity = item.quantity + 1;
-        }
-        return item;
-      });
+      var index = basket.items.indexOf(itemAlreadyInBasket);
+
+      basket.items[index].quantity = basket.items[index].quantity + 1;
 
       this.setBasket(basket);
       return;
@@ -50,13 +47,10 @@ export class BasketStore {
       return;
     }
 
-    basket.items.map((item) => {
-      if (item.product.productId === product.productId) {
-        item.product = product;
-        item.quantity = quantity;
-      }
-      return item;
-    });
+    var index = basket.items.indexOf(itemAlreadyInBasket);
+
+    basket.items[index].product = product;
+    basket.items[index].quantity = quantity;
 
     this.setBasket(basket);
   }
