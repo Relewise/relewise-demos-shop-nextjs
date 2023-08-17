@@ -2,7 +2,11 @@
 import { BasketItemCountContext } from "@/app/layout";
 import { Basket, BasketItem } from "@/stores/basket";
 import { BasketStore } from "@/stores/basketStore";
-import { ProductResult, PurchasedWithCurrentCartBuilder } from "@relewise/client";
+import {
+  ProductResult,
+  PurchasedWithCurrentCartBuilder,
+  PurchasedWithMultipleProductsBuilder
+} from "@relewise/client";
 import dynamic from "next/dynamic";
 import { useContext, useEffect, useState } from "react";
 import ProductImage from "./product/productImage";
@@ -16,6 +20,8 @@ const Component = () => {
   const { setBasketItemCount } = useContext(BasketItemCountContext);
   const [basket, setBasket] = useState<Basket>(initialBasket);
   const [recommendations, setRecommendations] = useState<ProductResult[]>([]);
+
+  const userHasAcceptedTracking = false;
 
   function updateBasket(product: ProductResult, quantity: number) {
     basketStore.updateProductInBasket(product, quantity);
@@ -36,20 +42,41 @@ const Component = () => {
       return;
     }
     const contextStore = new ContextStore();
-
-    const request = new PurchasedWithCurrentCartBuilder(contextStore.getDefaultSettings())
-      .setSelectedProductProperties(contextStore.getProductSettings())
-      .setSelectedVariantProperties({ allData: true })
-      .setNumberOfRecommendations(5)
-      .build();
-
     const recommender = contextStore.getRecommender();
-    recommender.recommendPurchasedWithCurrentCart(request).then((result) => {
-      if (result) {
-        setRecommendations(result.recommendations ?? []);
-      }
-    });
-  }, [basket.items.length]);
+
+    if (userHasAcceptedTracking) {
+      const builder = new PurchasedWithCurrentCartBuilder(contextStore.getDefaultSettings())
+        .setSelectedProductProperties(contextStore.getProductSettings())
+        .setSelectedVariantProperties({ allData: true })
+        .setNumberOfRecommendations(5);
+
+      recommender.recommendPurchasedWithCurrentCart(builder.build()).then((result) => {
+        if (result) {
+          setRecommendations(result.recommendations ?? []);
+        }
+      });
+    } else {
+      const builder = new PurchasedWithMultipleProductsBuilder(contextStore.getDefaultSettings())
+        .setSelectedProductProperties(contextStore.getProductSettings())
+        .setSelectedVariantProperties({ allData: true })
+        .setNumberOfRecommendations(5)
+        .addProducts(
+          basket.items.map((basketItem) => {
+            return {
+              productId: basketItem.product.productId ?? "",
+              variantId: basketItem.product.variant?.variantId ?? undefined
+            };
+          })
+        );
+
+      recommender.recommendPurchasedWithMultipleProducts(builder.build()).then((result) => {
+        if (result) {
+          console.log(result);
+          setRecommendations(result.recommendations ?? []);
+        }
+      });
+    }
+  }, [basket.items, basket.items.length, userHasAcceptedTracking]);
 
   return (
     <div>
@@ -142,11 +169,11 @@ const Component = () => {
       {recommendations.length > 0 && (
         <>
           <h2 className="text-2xl font-semibold">Recommendations</h2>
-          {recommendations.map((product) => {
-            <div className="grid gap-3 grid-cols-5 mt-3">
-              <ProductTile product={product} />
-            </div>;
-          })}
+          <div className="grid gap-3 grid-cols-5 mt-3">
+            {recommendations.map((product, index) => (
+              <ProductTile key={index} product={product} />
+            ))}
+          </div>
         </>
       )}
     </div>
