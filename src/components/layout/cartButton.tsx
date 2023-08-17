@@ -10,7 +10,7 @@ export default function CartButton() {
   return (
     <>
       <a
-        href={`${basePath}"/cart"`}
+        href={`${basePath}/cart`}
         className="relative rounded-full bg-zinc-100 p-2 text-zinc-600 hover:bg-zinc-200"
       >
         <ShoppingBagIcon className="h-8 w-8" />
