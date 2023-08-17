@@ -61,17 +61,18 @@ const Component = () => {
         .setSelectedVariantProperties({ allData: true })
         .setNumberOfRecommendations(5)
         .addProducts(
-          basket.items.map((basketItem) => {
-            return {
-              productId: basketItem.product.productId ?? "",
-              variantId: basketItem.product.variant?.variantId ?? undefined
-            };
-          })
+          basket.items
+            .filter((basketItem) => basketItem.product.productId)
+            .map((basketItem) => {
+              return {
+                productId: basketItem.product.productId ?? "",
+                variantId: basketItem.product.variant?.variantId ?? undefined
+              };
+            })
         );
 
       recommender.recommendPurchasedWithMultipleProducts(builder.build()).then((result) => {
         if (result) {
-          console.log(result);
           setRecommendations(result.recommendations ?? []);
         }
       });
