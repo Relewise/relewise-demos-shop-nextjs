@@ -3,10 +3,11 @@ import {
   Searcher,
   SelectedProductPropertiesSettings,
   Settings,
-  UserFactory
+  Tracker
 } from "@relewise/client";
 import { AppContext } from "./appContext";
 import { Dataset } from "./dataset";
+import { TrackingStore } from "./trackingStore";
 
 export class ContextStore {
   getSelectedDataset(): Dataset {
@@ -32,12 +33,13 @@ export class ContextStore {
       throw new Error("Missing language or currencycode");
     }
 
+    const tracking = new TrackingStore();
     const dataset = this.getSelectedDataset();
     return {
       language: dataset.language,
       currency: dataset.currencyCode,
       displayedAtLocation: "Relewise Demo Store",
-      user: UserFactory.anonymous()
+      user: tracking.getUser()
     };
   }
 
@@ -58,6 +60,14 @@ export class ContextStore {
     const selectedDataset = this.getSelectedDataset();
 
     return new Searcher(selectedDataset.datasetId, selectedDataset.apiKey, {
+      serverUrl: selectedDataset.serverUrl
+    });
+  }
+
+  getTracker(): Tracker {
+    const selectedDataset = this.getSelectedDataset();
+
+    return new Tracker(selectedDataset.datasetId, selectedDataset.apiKey, {
       serverUrl: selectedDataset.serverUrl
     });
   }

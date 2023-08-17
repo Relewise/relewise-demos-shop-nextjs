@@ -13,6 +13,7 @@ import ProductImage from "./product/productImage";
 import { ContextStore } from "@/stores/contextStore";
 import ProductTile from "./product/productTile";
 import renderPrice from "@/util/price";
+import { TrackingStore } from "@/stores/trackingStore";
 
 const Component = () => {
   const basketStore = new BasketStore();
@@ -34,6 +35,7 @@ const Component = () => {
   function checkout() {
     basketStore.clearBasket();
     const newBasket = basketStore.getBasket();
+    new TrackingStore().trackOrder(basket);
     setBasketItemCount(newBasket.items.length);
     setBasket(newBasket);
   }

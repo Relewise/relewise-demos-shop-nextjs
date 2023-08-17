@@ -1,8 +1,10 @@
 import { ProductResult } from "@relewise/client";
 import { Basket, BasketItem } from "./basket";
+import { TrackingStore } from "./trackingStore";
 
 export class BasketStore {
   private setBasket(basket: Basket) {
+    new TrackingStore().trackCart(basket);
     localStorage.setItem("nextjs-basket", JSON.stringify(basket));
   }
 

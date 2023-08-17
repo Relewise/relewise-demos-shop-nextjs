@@ -20,6 +20,7 @@ import { createPortal } from "react-dom";
 import Facets from "./facets";
 import Pagination from "./pagination";
 import ProductTile from "./product/productTile";
+import { TrackingStore } from "@/stores/trackingStore";
 
 interface SearchOverlayProps {
   input: string;
@@ -111,6 +112,8 @@ const Component = (props: SearchOverlayProps) => {
         const productResult = response.responses[0] as ProductSearchResponse;
         setProducts(productResult);
         setPredictions((response.responses[1] as SearchTermPredictionResponse)?.predictions ?? []);
+
+        new TrackingStore().trackSearchTerm(props.input);
 
         if (productResult.hits < 1) {
           const searchTermBasedProductRecommendationBuilder =

@@ -15,6 +15,7 @@ import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import Facets from "./facets";
 import Pagination from "./pagination";
 import ProductTile from "./product/productTile";
+import { TrackingStore } from "@/stores/trackingStore";
 
 const Component = () => {
   const contextStore = useCallback(() => new ContextStore(), []);
@@ -31,9 +32,7 @@ const Component = () => {
 
   const [category, setCategory] = useState<CategoryResult | undefined>();
   const [products, setProducts] = useState<ProductSearchResponse | undefined>();
-  const [selectedFacets, setSelectedFacets] = useState<
-    Record<string, string[]>
-  >({
+  const [selectedFacets, setSelectedFacets] = useState<Record<string, string[]>>({
     Category: currentSelectedSubCategories ?? [],
     Brand: currentSelectedBrands ?? []
   });
@@ -48,25 +47,12 @@ const Component = () => {
   const pageSize = 40;
 
   const setQueryString = useCallback(() => {
-    const facetParams = generateFacetQueryString(
-      searchParams,
-      selectedFacets,
-      minPrice,
-      maxPrice
-    );
+    const facetParams = generateFacetQueryString(searchParams, selectedFacets, minPrice, maxPrice);
 
     facetParams.set("CategoryIds", categoryIds().toString());
     facetParams.set("Sort", sort);
     router.push("?" + facetParams.toString());
-  }, [
-    categoryIds,
-    maxPrice,
-    minPrice,
-    router,
-    searchParams,
-    selectedFacets,
-    sort
-  ]);
+  }, [categoryIds, maxPrice, minPrice, router, searchParams, selectedFacets, sort]);
 
   function onSortChange(e: ChangeEvent<HTMLSelectElement>) {
     const sortBy = e.target.value as Sort;
@@ -89,13 +75,12 @@ const Component = () => {
         ])
       );
 
-    searcher
-      .searchProductCategories(productCategorySearchBuilder.build())
-      .then((response) => {
-        if (response?.results) {
-          setCategory(response?.results[0]);
-        }
-      });
+    searcher.searchProductCategories(productCategorySearchBuilder.build()).then((response) => {
+      if (response?.results) {
+        new TrackingStore().trackCategoryView(categoryIds());
+        setCategory(response?.results[0]);
+      }
+    });
   }, [categoryIds, contextStore]);
 
   useEffect(() => {
@@ -104,23 +89,16 @@ const Component = () => {
     }
 
     setQueryString();
-    const productSearchBuild = new ProductSearchBuilder(
-      contextStore().getDefaultSettings()
-    )
+    const productSearchBuild = new ProductSearchBuilder(contextStore().getDefaultSettings())
       .setSelectedProductProperties(contextStore().getProductSettings())
       .setSelectedVariantProperties({ allData: true })
       .setExplodedVariants(1)
       .filters((f) => {
-        f.addProductCategoryIdFilter("Ancestor", [
-          categoryIds()[categoryIds().length - 1]
-        ]);
+        f.addProductCategoryIdFilter("Ancestor", [categoryIds()[categoryIds().length - 1]]);
       })
       .facets((f) =>
         f
-          .addCategoryFacet(
-            "ImmediateParent",
-            getFacetsByType(selectedFacets, "Category")
-          )
+          .addCategoryFacet("ImmediateParent", getFacetsByType(selectedFacets, "Category"))
           .addBrandFacet(getFacetsByType(selectedFacets, "Brand"))
           .addSalesPriceRangeFacet("Product", minPrice, maxPrice)
       )
@@ -152,16 +130,7 @@ const Component = () => {
         setProducts(response);
         setPage(1);
       });
-  }, [
-    page,
-    sort,
-    selectedFacets,
-    minPrice,
-    maxPrice,
-    contextStore,
-    setQueryString,
-    categoryIds
-  ]);
+  }, [page, sort, selectedFacets, minPrice, maxPrice, contextStore, setQueryString, categoryIds]);
 
   return (
     <div className="search">
@@ -183,14 +152,11 @@ const Component = () => {
           {products?.results && (
             <div>
               <div className="bg-white rounded flex items-end p-3 gap-4">
-                <h1 className="text-3xl font-semibold">
-                  {category?.displayName}
-                </h1>
+                <h1 className="text-3xl font-semibold">{category?.displayName}</h1>
                 {products?.hits > 0 && (
                   <span className="whitespace-nowrap">
                     Showing {page * pageSize - (pageSize - 1)} -{" "}
-                    {products?.hits < pageSize ? products?.hits : page * 40} of{" "}
-                    {products?.hits}
+                    {products?.hits < pageSize ? products?.hits : page * 40} of {products?.hits}
                   </span>
                 )}
                 <div className="flex-grow"></div>
