@@ -52,17 +52,7 @@ export class TrackingStore {
 
     const contextStore = new ContextStore();
 
-    const lineItems = basket.items
-      .filter((item) => item.product.productId)
-      .map((item) => {
-        return {
-          lineTotal: item.product.salesPrice ? item.product.salesPrice * item.quantity : 0,
-          productId: item.product.productId!,
-          quantity: item.quantity
-        };
-      });
-
-    if (lineItems.length < 1) return;
+    const lineItems = this.mapToLineItems(basket);
 
     const subtotal = lineItems.reduce((total, i) => total + i.lineTotal, 0);
     const tracker = contextStore.getTracker();

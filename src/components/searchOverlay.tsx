@@ -1,7 +1,7 @@
 "use client";
+import { ContextStore } from "@/stores/contextStore";
 import generateFacetQueryString from "@/util/generateFacetQueryString";
 import getFacetsByType from "@/util/getFacetsByType";
-import { ContextStore } from "@/stores/contextStore";
 import {
   ProductRecommendationResponse,
   ProductSearchBuilder,
@@ -20,7 +20,6 @@ import { createPortal } from "react-dom";
 import Facets from "./facets";
 import Pagination from "./pagination";
 import ProductTile from "./product/productTile";
-import { TrackingStore } from "@/stores/trackingStore";
 
 interface SearchOverlayProps {
   input: string;

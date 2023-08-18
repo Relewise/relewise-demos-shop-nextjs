@@ -3,8 +3,10 @@ import { Basket, BasketItem } from "./basket";
 import { TrackingStore } from "./trackingStore";
 
 export class BasketStore {
-  private setBasket(basket: Basket) {
-    new TrackingStore().trackCart(basket);
+  private setBasket(basket: Basket, shouldTrack: boolean = true) {
+    if (shouldTrack) {
+      new TrackingStore().trackCart(basket);
+    }
     localStorage.setItem("nextjs-basket", JSON.stringify(basket));
   }
 
@@ -66,7 +68,7 @@ export class BasketStore {
     this.setBasket(basket);
   }
 
-  clearBasket() {
-    this.setBasket(new Basket());
+  clearBasket(shouldTrack: boolean = true) {
+    this.setBasket(new Basket(), shouldTrack);
   }
 }
