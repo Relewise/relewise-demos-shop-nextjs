@@ -45,7 +45,12 @@ export class ContextStore {
 
   isConfigured(): boolean {
     const appContext = this.getAppContext();
-    return appContext.datasets.length > 0;
+    if (appContext.datasets.length > 0) return false;
+
+    const selectedDataset = this.getSelectedDataset();
+    if (!selectedDataset.apiKey || !selectedDataset.datasetId) return false;
+
+    return true;
   }
 
   getRecommender(): Recommender {
