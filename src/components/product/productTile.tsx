@@ -1,6 +1,7 @@
 import { basePath } from "@/util/basePath";
 import { ProductResult } from "@relewise/client";
 import ProductImage from "./productImage";
+import renderPrice from "@/util/price";
 interface ProductTileProps {
   product: ProductResult;
 }
@@ -22,9 +23,7 @@ export default function ProductTile(props: ProductTileProps) {
       <div className="mt-3 px-3">
         <div className="text-left">
           {props.product.brand && (
-            <span className="text-sm text-zinc-500">
-              {props.product.brand?.displayName}
-            </span>
+            <span className="text-sm text-zinc-500">{props.product.brand?.displayName}</span>
           )}
           <h5 className="tracking-tight text-zinc-900 font-semibold leading-tight h-10">
             {props.product.displayName}
@@ -33,11 +32,11 @@ export default function ProductTile(props: ProductTileProps) {
         <div className="mt-2 flex items-center justify-between">
           <p>
             <span className="text-lg font-semibold text-zinc-900 mr-1 leading-none">
-              {props.product.salesPrice}
+              {renderPrice(props.product.salesPrice)}
             </span>
             {props.product.salesPrice !== props.product.salesPrice && (
               <span className="text-zinc-900 line-through">
-                {props.product.listPrice}
+                {renderPrice(props.product.listPrice)}
               </span>
             )}
           </p>

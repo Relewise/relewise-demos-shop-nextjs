@@ -12,6 +12,7 @@ import { useContext, useEffect, useState } from "react";
 import ProductImage from "./product/productImage";
 import { ContextStore } from "@/stores/contextStore";
 import ProductTile from "./product/productTile";
+import renderPrice from "@/util/price";
 
 const Component = () => {
   const basketStore = new BasketStore();
@@ -124,14 +125,14 @@ const Component = () => {
                   <div className="flex items-center space-x-4">
                     <p>
                       <span className="text-lg text-zinc-900 mr-1 leading-none">
-                        {item.product.salesPrice}
+                        {renderPrice(item.product.salesPrice)}
                       </span>
                       {item.product.salesPrice !== item.product.listPrice && (
                         <span
                           v-if="item.product.salesPrice !== item.product.listPrice"
                           className="text-zinc-900 line-through"
                         >
-                          {item.product.listPrice}
+                          {renderPrice(item.product.listPrice)}
                         </span>
                       )}
                     </p>
@@ -157,9 +158,11 @@ const Component = () => {
             <p className="text-lg font-bold">Total</p>
             <div>
               <p className="mb-1 text-lg font-bold">
-                {basket.items
-                  .map((x) => (x.product.salesPrice ?? 0) * x.quantity)
-                  .reduce((partialSum, a) => partialSum + a, 0)}
+                {renderPrice(
+                  basket.items
+                    .map((x) => (x.product.salesPrice ?? 0) * x.quantity)
+                    .reduce((partialSum, a) => partialSum + a, 0)
+                )}
               </p>
               <p className="text-sm text-gray-700">including VAT</p>
             </div>
