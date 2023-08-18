@@ -3,6 +3,7 @@ import { BasketItemCountContext } from "@/app/layout";
 import ProductImage from "@/components/product/productImage";
 import { BasketStore } from "@/stores/basketStore";
 import { ContextStore } from "@/stores/contextStore";
+import renderPrice from "@/util/price";
 import { ProductResult, ProductSearchBuilder } from "@relewise/client";
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
@@ -64,10 +65,12 @@ const Component = () => {
               <div className="mt-2 flex items-center justify-between">
                 <p>
                   <span className="text-lg font-semibold text-zinc-900 mr-1 leading-none">
-                    {product.salesPrice}
+                    {renderPrice(product.salesPrice)}
                   </span>
                   {product.salesPrice !== product.listPrice && (
-                    <span className="text-zinc-900 line-through">{product.listPrice}</span>
+                    <span className="text-zinc-900 line-through">
+                      {renderPrice(product.listPrice)}
+                    </span>
                   )}
                 </p>
               </div>
