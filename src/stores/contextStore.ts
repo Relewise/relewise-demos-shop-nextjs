@@ -7,6 +7,7 @@ import {
 } from "@relewise/client";
 import { AppContext } from "./appContext";
 import { Dataset } from "./dataset";
+import { toast } from "react-toastify";
 import { TrackingStore } from "./trackingStore";
 
 export class ContextStore {
@@ -45,10 +46,14 @@ export class ContextStore {
 
   isConfigured(): boolean {
     const appContext = this.getAppContext();
-    if (appContext.datasets.length > 0) return false;
-
     const selectedDataset = this.getSelectedDataset();
-    if (!selectedDataset.apiKey || !selectedDataset.datasetId) return false;
+
+    if (!selectedDataset.apiKey || !selectedDataset.datasetId) {
+      toast.error("Dataset not correctly configured", {
+        toastId: "is-not-configured"
+      });
+      return false;
+    }
 
     return true;
   }
