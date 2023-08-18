@@ -1,8 +1,7 @@
 import { User, UserFactory } from "@relewise/client";
-import { Tracking } from "./tracking";
-import { ContextStore } from "./contextStore";
 import { Basket } from "./basket";
-import { it } from "node:test";
+import { ContextStore } from "./contextStore";
+import { Tracking } from "./tracking";
 
 export class TrackingStore {
   setTracking(tracking: Tracking) {
@@ -10,13 +9,13 @@ export class TrackingStore {
   }
 
   getTracking(): Tracking {
-    const storage = localStorage.getItem("nextjs-tracking")?.toString();
+    const storedTrackingContext = localStorage.getItem("nextjs-tracking")?.toString();
 
-    if (!storage) {
+    if (!storedTrackingContext) {
       return new Tracking();
     }
 
-    const trackingFromStorage: Tracking = JSON.parse(storage);
+    const trackingFromStorage: Tracking = JSON.parse(storedTrackingContext);
     return trackingFromStorage;
   }
 
