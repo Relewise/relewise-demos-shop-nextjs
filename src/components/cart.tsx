@@ -13,16 +13,17 @@ import ProductImage from "./product/productImage";
 import { ContextStore } from "@/stores/contextStore";
 import ProductTile from "./product/productTile";
 import renderPrice from "@/util/price";
+import { TrackingStore } from "@/stores/trackingStore";
 
 const Component = () => {
   const basketStore = new BasketStore();
   const initialBasket = basketStore.getBasket();
 
   const { setBasketItemCount } = useContext(BasketItemCountContext);
-  const [basket, setBasket] = useState<Basket>(initialBasket);
+  const [currentBasket, setBasket] = useState<Basket>(initialBasket);
   const [recommendations, setRecommendations] = useState<ProductResult[]>([]);
 
-  const userHasAcceptedTracking = false;
+  const userHasAcceptedTracking = new TrackingStore().getTracking().enabled;
 
   function updateBasket(product: ProductResult, quantity: number) {
     basketStore.updateProductInBasket(product, quantity);
@@ -32,14 +33,15 @@ const Component = () => {
   }
 
   function checkout() {
-    basketStore.clearBasket();
+    basketStore.clearBasket(false);
     const newBasket = basketStore.getBasket();
+    new TrackingStore().trackOrder(currentBasket);
     setBasketItemCount(newBasket.items.length);
     setBasket(newBasket);
   }
 
   useEffect(() => {
-    if (basket.items.length < 1) {
+    if (currentBasket.items.length < 1) {
       return;
     }
     const contextStore = new ContextStore();
@@ -62,7 +64,7 @@ const Component = () => {
         .setSelectedVariantProperties({ allData: true })
         .setNumberOfRecommendations(5)
         .addProducts(
-          basket.items
+          currentBasket.items
             .filter((basketItem) => basketItem.product.productId)
             .map((basketItem) => {
               return {
@@ -78,15 +80,15 @@ const Component = () => {
         }
       });
     }
-  }, [basket.items, basket.items.length, userHasAcceptedTracking]);
+  }, [currentBasket.items, currentBasket.items.length, userHasAcceptedTracking]);
 
   return (
     <div>
       <h1 className="mb-3 text-4xl font-semibold">Cart</h1>
-      {basket.items.length < 1 && <div v-if="isEmpty">Cart is empty</div>}
+      {currentBasket.items.length < 1 && <div v-if="isEmpty">Cart is empty</div>}
       <div className="justify-center px-6 md:flex md:space-x-6 xl:px-0">
         <div className="rounded md:w-2/3">
-          {basket.items.map((item, index) => (
+          {currentBasket.items.map((item, index) => (
             <div
               key={index}
               className="justify-between mb-3 rounded bg-white p-3 sm:flex sm:justify-start"
@@ -159,7 +161,7 @@ const Component = () => {
             <div>
               <p className="mb-1 text-lg font-bold">
                 {renderPrice(
-                  basket.items
+                  currentBasket.items
                     .map((x) => (x.product.salesPrice ?? 0) * x.quantity)
                     .reduce((partialSum, a) => partialSum + a, 0)
                 )}

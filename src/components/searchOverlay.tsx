@@ -1,7 +1,7 @@
 "use client";
+import { ContextStore } from "@/stores/contextStore";
 import generateFacetQueryString from "@/util/generateFacetQueryString";
 import getFacetsByType from "@/util/getFacetsByType";
-import { ContextStore } from "@/stores/contextStore";
 import {
   ProductRecommendationResponse,
   ProductSearchBuilder,
