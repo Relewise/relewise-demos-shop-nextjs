@@ -45,10 +45,12 @@ export class ContextStore {
   }
 
   isConfigured(): boolean {
-    const appContext = this.getAppContext();
     const selectedDataset = this.getSelectedDataset();
 
-    if (!selectedDataset.apiKey || !selectedDataset.datasetId) {
+    if (!selectedDataset.apiKey ||
+        !selectedDataset.datasetId ||
+        !selectedDataset.currencyCode ||
+        !selectedDataset.language) {
       toast.error("Dataset not correctly configured", {
         toastId: "is-not-configured"
       });
