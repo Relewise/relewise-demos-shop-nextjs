@@ -3,6 +3,7 @@ import { BasketItemCountContext } from "@/app/layout";
 import ProductImage from "@/components/product/productImage";
 import { BasketStore } from "@/stores/basketStore";
 import { ContextStore } from "@/stores/contextStore";
+import { TrackingStore } from "@/stores/trackingStore";
 import renderPrice from "@/util/price";
 import { ProductResult, ProductSearchBuilder } from "@relewise/client";
 import dynamic from "next/dynamic";
@@ -39,6 +40,7 @@ const Component = () => {
       .searchProducts(builder.build())
       .then((result) => {
         if (result?.results) {
+          new TrackingStore().trackProductView(id)
           setProduct(result.results[0]);
         }
       });
