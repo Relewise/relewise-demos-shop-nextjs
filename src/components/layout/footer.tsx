@@ -11,9 +11,9 @@ export default function Footer() {
           <a href="https://relewise.com/contact-us/">
             <Image
               alt="relewise logo"
-              src="https://relewise.com/wp-content/uploads/2022/09/hdr_logo.png"
+              src="/logo.svg"
               className="h-14"
-              width={56}
+              width={376}
               height={56}
             />
           </a>
