@@ -1,5 +1,6 @@
 import Image from "next/image";
 import FooterCategories from "./footerCategories";
+import { basePath } from "@/util/basePath";
 
 export default function Footer() {
   return (
@@ -11,7 +12,7 @@ export default function Footer() {
           <a href="https://relewise.com/contact-us/">
             <Image
               alt="relewise logo"
-              src="/logo.svg"
+              src={`${basePath}/logo.svg`}
               className="h-14"
               width={376}
               height={56}
