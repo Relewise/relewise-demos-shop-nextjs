@@ -4,7 +4,8 @@ This is the Relewise demo shop featuring Search & Recommendations built on top o
 
 Link to the demo shop is here: https://relewise.github.io/relewise-demos-shop-nextjs/
 
-In order to run the demo shop you access to a dataset in Relewise.
+In order to run the demo shop you need access to a dataset in Relewise. 
+Click here to sign-up for a 14 days Free Trial: https://www.relewise.com/free-trial
 
 ## Development setup
 
