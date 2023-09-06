@@ -22,6 +22,8 @@ export default function handleRelewiseClientError(error: ProblemDetailsError) {
             text = 'There was an unexpected error on your dataset. Contact Relewise for help.';
         }
     }
-    
-    toast.error(text);
+
+    toast.error(text, {
+        toastId: "relewise-client-error"
+      });
 }
