@@ -4,6 +4,7 @@ import { PopularProductsBuilder, ProductResult } from "@relewise/client";
 import dynamic from "next/dynamic";
 import React, { useEffect } from "react";
 import ProductTile from "./product/productTile";
+import handleRelewiseClientError, { RelewiseClientError } from "@/util/handleError";
 
 const Component = () => {
   const [popularProducts, setPopularProducts] = React.useState<
@@ -26,6 +27,9 @@ const Component = () => {
       .recommendPopularProducts(builder.build())
       .then((result) => {
         setPopularProducts(result?.recommendations);
+      })
+      .catch((e: RelewiseClientError) => {
+        handleRelewiseClientError(e);
       });
   }, []);
 

@@ -6,6 +6,7 @@ import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import FlatFooterCategories from "./flatFooterCategories";
 import NestedFooterCategories from "./nestedFooterCategories";
+import handleRelewiseClientError, { RelewiseClientError } from "@/util/handleError";
 
 const Component = () => {
   const [categories, setCategories] = useState<
@@ -21,7 +22,11 @@ const Component = () => {
   };
   useEffect(() => {
     const contextStore = new ContextStore();
-    getCategories(contextStore).then((result) => setCategories(result));
+    getCategories(contextStore)
+    .then((result) => setCategories(result))
+    .catch((e: RelewiseClientError) => {
+      handleRelewiseClientError(e);
+    });
   }, []);
 
   return (

@@ -1,5 +1,6 @@
 "use client";
 import { ContextStore } from "@/stores/contextStore";
+import handleRelewiseClientError, { RelewiseClientError } from "@/util/handleError";
 import {
   BrandResult,
   PopularBrandsRecommendationBuilder
@@ -28,7 +29,10 @@ const Component = () => {
       .recommendPopularBrands(builder.build())
       .then((result) => {
         setPopularBrands(result?.recommendations);
-      });
+      })
+      .catch((e: RelewiseClientError) => {
+        handleRelewiseClientError(e);
+      });;
   }, []);
 
   return (

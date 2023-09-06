@@ -54,7 +54,10 @@ const Component = () => {
           setPurchasedWithProduct(result.responses[0].recommendations);
           setProductsViewedAfterViewing(result.responses[1].recommendations);
         }
-      });
+      })
+      .catch((e: RelewiseClientError) => {
+        handleRelewiseClientError(e);
+      });;
   }, [id]);
 
   return (

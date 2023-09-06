@@ -14,6 +14,7 @@ import { ContextStore } from "@/stores/contextStore";
 import ProductTile from "./product/productTile";
 import renderPrice from "@/util/price";
 import { TrackingStore } from "@/stores/trackingStore";
+import handleRelewiseClientError, { RelewiseClientError } from "@/util/handleError";
 
 const Component = () => {
   const basketStore = new BasketStore();
@@ -57,7 +58,10 @@ const Component = () => {
         if (result) {
           setRecommendations(result.recommendations ?? []);
         }
-      });
+      })
+      .catch((e: RelewiseClientError) => {
+        handleRelewiseClientError(e);
+      });;
     } else {
       const builder = new PurchasedWithMultipleProductsBuilder(contextStore.getDefaultSettings())
         .setSelectedProductProperties(contextStore.getProductSettings())
@@ -78,7 +82,10 @@ const Component = () => {
         if (result) {
           setRecommendations(result.recommendations ?? []);
         }
-      });
+      })
+      .catch((e: RelewiseClientError) => {
+        handleRelewiseClientError(e);
+      });;
     }
   }, [currentBasket.items, currentBasket.items.length, userHasAcceptedTracking]);
 

@@ -20,6 +20,7 @@ import { createPortal } from "react-dom";
 import Facets from "./facets";
 import Pagination from "./pagination";
 import ProductTile from "./product/productTile";
+import handleRelewiseClientError, { RelewiseClientError } from "@/util/handleError";
 
 interface SearchOverlayProps {
   input: string;
@@ -126,10 +127,16 @@ const Component = (props: SearchOverlayProps) => {
             .recommendSearchTermBasedProducts(searchTermBasedProductRecommendationBuilder.build())
             .then((response) => {
               setFallbackProducts(response);
-            });
+            })
+            .catch((e: RelewiseClientError) => {
+              handleRelewiseClientError(e);
+            });;
         }
       }
-    });
+    })
+    .catch((e: RelewiseClientError) => {
+      handleRelewiseClientError(e);
+    });;
   }, [maxPrice, minPrice, page, props.input, selectedFacets, setQueryString]);
 
   return isSearching() && document != undefined
@@ -241,5 +248,3 @@ const Component = (props: SearchOverlayProps) => {
 const SearchOverlay = dynamic(() => Promise.resolve(Component), {
   ssr: false
 });
-
-export default SearchOverlay;
