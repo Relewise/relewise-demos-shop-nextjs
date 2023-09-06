@@ -10,6 +10,7 @@ import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect } from "react";
 import ProductGrid from "./product/productGrid";
+import handleRelewiseClientError, { RelewiseClientError } from "@/util/handleError";
 
 const Component = () => {
   const searchParams = useSearchParams();

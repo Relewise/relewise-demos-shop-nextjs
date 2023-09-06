@@ -248,3 +248,5 @@ const Component = (props: SearchOverlayProps) => {
 const SearchOverlay = dynamic(() => Promise.resolve(Component), {
   ssr: false
 });
+
+export default SearchOverlay;
