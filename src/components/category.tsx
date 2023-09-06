@@ -5,6 +5,7 @@ import generateFacetQueryString from "@/util/generateFacetQueryString";
 import getFacetsByType from "@/util/getFacetsByType";
 import {
   CategoryResult,
+  ProblemDetailsError,
   ProductCategorySearchBuilder,
   ProductSearchBuilder,
   ProductSearchResponse
@@ -16,6 +17,7 @@ import Facets from "./facets";
 import Pagination from "./pagination";
 import ProductTile from "./product/productTile";
 import { TrackingStore } from "@/stores/trackingStore";
+import handleRelewiseClientError from "@/util/handleError";
 
 const Component = () => {
   const contextStore = useCallback(() => new ContextStore(), []);
@@ -80,7 +82,8 @@ const Component = () => {
         new TrackingStore().trackCategoryView(categoryIds());
         setCategory(response?.results[0]);
       }
-    });
+    })
+    .catch((e: ProblemDetailsError) => handleRelewiseClientError(e));
   }, [categoryIds, contextStore]);
 
   useEffect(() => {
@@ -129,7 +132,8 @@ const Component = () => {
       .then((response) => {
         setProducts(response);
         setPage(1);
-      });
+      })
+      .catch((e: ProblemDetailsError) => handleRelewiseClientError(e));
   }, [page, sort, selectedFacets, minPrice, maxPrice, contextStore, setQueryString, categoryIds]);
 
   return (

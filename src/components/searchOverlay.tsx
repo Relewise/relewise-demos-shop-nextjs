@@ -3,6 +3,7 @@ import { ContextStore } from "@/stores/contextStore";
 import generateFacetQueryString from "@/util/generateFacetQueryString";
 import getFacetsByType from "@/util/getFacetsByType";
 import {
+  ProblemDetailsError,
   ProductRecommendationResponse,
   ProductSearchBuilder,
   ProductSearchResponse,
@@ -20,6 +21,7 @@ import { createPortal } from "react-dom";
 import Facets from "./facets";
 import Pagination from "./pagination";
 import ProductTile from "./product/productTile";
+import handleRelewiseClientError from "@/util/handleError";
 
 interface SearchOverlayProps {
   input: string;
@@ -126,10 +128,12 @@ const Component = (props: SearchOverlayProps) => {
             .recommendSearchTermBasedProducts(searchTermBasedProductRecommendationBuilder.build())
             .then((response) => {
               setFallbackProducts(response);
-            });
+            })
+            .catch((e: ProblemDetailsError) => handleRelewiseClientError(e));
         }
       }
-    });
+    })
+    .catch((e: ProblemDetailsError) => handleRelewiseClientError(e));
   }, [maxPrice, minPrice, page, props.input, selectedFacets, setQueryString]);
 
   return isSearching() && document != undefined

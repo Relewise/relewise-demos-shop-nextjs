@@ -4,8 +4,9 @@ import ProductImage from "@/components/product/productImage";
 import { BasketStore } from "@/stores/basketStore";
 import { ContextStore } from "@/stores/contextStore";
 import { TrackingStore } from "@/stores/trackingStore";
+import handleRelewiseClientError from "@/util/handleError";
 import renderPrice from "@/util/price";
-import { ProductResult, ProductSearchBuilder } from "@relewise/client";
+import { ProblemDetailsError, ProductResult, ProductSearchBuilder } from "@relewise/client";
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
@@ -43,7 +44,8 @@ const Component = () => {
           new TrackingStore().trackProductView(id)
           setProduct(result.results[0]);
         }
-      });
+      })
+      .catch((e: ProblemDetailsError) => handleRelewiseClientError(e));
   }, [id]);
 
   return (
