@@ -45,9 +45,7 @@ const Component = () => {
           setProduct(result.results[0]);
         }
       })
-      .catch((e: ProblemDetailsError) => {
-        handleRelewiseClientError(e);
-      });
+      .catch((e: ProblemDetailsError) => handleRelewiseClientError(e));
   }, [id]);
 
   return (

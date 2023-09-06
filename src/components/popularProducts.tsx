@@ -28,9 +28,7 @@ const Component = () => {
       .then((result) => {
         setPopularProducts(result?.recommendations);
       })
-      .catch((e: ProblemDetailsError) => {
-        handleRelewiseClientError(e);
-      });
+      .catch((e: ProblemDetailsError) => handleRelewiseClientError(e));
   }, []);
 
   return (

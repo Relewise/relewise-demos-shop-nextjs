@@ -31,9 +31,7 @@ const Component = () => {
       .then((result) => {
         setPopularBrands(result?.recommendations);
       })
-      .catch((e: ProblemDetailsError) => {
-        handleRelewiseClientError(e);
-      });
+      .catch((e: ProblemDetailsError) => handleRelewiseClientError(e));
   }, []);
 
   return (

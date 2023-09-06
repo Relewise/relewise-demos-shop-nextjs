@@ -24,9 +24,7 @@ const Component = () => {
     const contextStore = new ContextStore();
     getCategories(contextStore)
     .then((result) => setCategories(result))
-    .catch((e: ProblemDetailsError) => {
-      handleRelewiseClientError(e);
-    });
+    .catch((e: ProblemDetailsError) => handleRelewiseClientError(e));
   }, []);
 
   return (

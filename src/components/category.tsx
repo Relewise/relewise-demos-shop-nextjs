@@ -83,9 +83,7 @@ const Component = () => {
         setCategory(response?.results[0]);
       }
     })
-    .catch((e: ProblemDetailsError) => {
-      handleRelewiseClientError(e);
-    });
+    .catch((e: ProblemDetailsError) => handleRelewiseClientError(e));
   }, [categoryIds, contextStore]);
 
   useEffect(() => {
@@ -135,9 +133,7 @@ const Component = () => {
         setProducts(response);
         setPage(1);
       })
-      .catch((e: ProblemDetailsError) => {
-        handleRelewiseClientError(e);
-      });
+      .catch((e: ProblemDetailsError) => handleRelewiseClientError(e));
   }, [page, sort, selectedFacets, minPrice, maxPrice, contextStore, setQueryString, categoryIds]);
 
   return (

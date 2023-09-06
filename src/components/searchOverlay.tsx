@@ -129,15 +129,11 @@ const Component = (props: SearchOverlayProps) => {
             .then((response) => {
               setFallbackProducts(response);
             })
-            .catch((e: ProblemDetailsError) => {
-              handleRelewiseClientError(e);
-            });
+            .catch((e: ProblemDetailsError) => handleRelewiseClientError(e));
         }
       }
     })
-    .catch((e: ProblemDetailsError) => {
-      handleRelewiseClientError(e);
-    });
+    .catch((e: ProblemDetailsError) => handleRelewiseClientError(e));
   }, [maxPrice, minPrice, page, props.input, selectedFacets, setQueryString]);
 
   return isSearching() && document != undefined

@@ -57,9 +57,7 @@ const Component = () => {
           setProductsViewedAfterViewing(result.responses[1].recommendations);
         }
       })
-      .catch((e: ProblemDetailsError) => {
-        handleRelewiseClientError(e);
-      });
+      .catch((e: ProblemDetailsError) => handleRelewiseClientError(e));
   }, [id]);
 
   return (

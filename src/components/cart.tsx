@@ -60,9 +60,7 @@ const Component = () => {
           setRecommendations(result.recommendations ?? []);
         }
       })
-        .catch((e: ProblemDetailsError) => {
-          handleRelewiseClientError(e);
-        });
+        .catch((e: ProblemDetailsError) => handleRelewiseClientError(e));
     } else {
       const builder = new PurchasedWithMultipleProductsBuilder(contextStore.getDefaultSettings())
         .setSelectedProductProperties(contextStore.getProductSettings())
@@ -84,9 +82,7 @@ const Component = () => {
           setRecommendations(result.recommendations ?? []);
         }
       })
-        .catch((e: ProblemDetailsError) => {
-          handleRelewiseClientError(e);
-        });
+        .catch((e: ProblemDetailsError) => handleRelewiseClientError(e));
     }
   }, [currentBasket.items, currentBasket.items.length, userHasAcceptedTracking]);
 
