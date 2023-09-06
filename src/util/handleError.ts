@@ -1,19 +1,11 @@
+import { ProblemDetailsError } from "@relewise/client";
 import { toast } from "react-toastify";
 
-export interface RelewiseClientError {
-    details: Detailts;
-}
+export default function handleRelewiseClientError(error: ProblemDetailsError) {
 
-interface Detailts {
-    status: number;
-    title: string;
-    traceId: string;
-    type: string;   
-}
+    let text = 'Something went wrong while calling Relewise.';
 
-export default function handleRelewiseClientError(error: RelewiseClientError) {
-    if (error.details.status !== 200) {
-        let text = 'Something went wrong while calling Relewise.';
+    if (error.details && error.details.status !== 200) {
         if (error.details.status === 400)  {
             text = 'The App does not support the expected scenario. Contact Relewise for help.';
         }
@@ -29,7 +21,7 @@ export default function handleRelewiseClientError(error: RelewiseClientError) {
         if (error.details.status === 500)  {
             text = 'There was an unexpected error on your dataset. Contact Relewise for help.';
         }
-
-        toast.error(text);
     }
+    
+    toast.error(text);
 }

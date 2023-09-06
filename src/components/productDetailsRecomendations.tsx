@@ -1,6 +1,7 @@
 "use client";
 import { ContextStore } from "@/stores/contextStore";
 import {
+  ProblemDetailsError,
   ProductResult,
   ProductsRecommendationCollectionBuilder,
   ProductsViewedAfterViewingProductBuilder,
@@ -10,7 +11,7 @@ import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect } from "react";
 import ProductGrid from "./product/productGrid";
-import handleRelewiseClientError, { RelewiseClientError } from "@/util/handleError";
+import handleRelewiseClientError from "@/util/handleError";
 
 const Component = () => {
   const searchParams = useSearchParams();
@@ -56,9 +57,9 @@ const Component = () => {
           setProductsViewedAfterViewing(result.responses[1].recommendations);
         }
       })
-      .catch((e: RelewiseClientError) => {
+      .catch((e: ProblemDetailsError) => {
         handleRelewiseClientError(e);
-      });;
+      });
   }, [id]);
 
   return (

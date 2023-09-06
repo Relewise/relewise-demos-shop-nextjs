@@ -4,9 +4,9 @@ import ProductImage from "@/components/product/productImage";
 import { BasketStore } from "@/stores/basketStore";
 import { ContextStore } from "@/stores/contextStore";
 import { TrackingStore } from "@/stores/trackingStore";
-import handleRelewiseClientError, { RelewiseClientError } from "@/util/handleError";
+import handleRelewiseClientError from "@/util/handleError";
 import renderPrice from "@/util/price";
-import { ProductResult, ProductSearchBuilder } from "@relewise/client";
+import { ProblemDetailsError, ProductResult, ProductSearchBuilder } from "@relewise/client";
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
@@ -45,9 +45,9 @@ const Component = () => {
           setProduct(result.results[0]);
         }
       })
-      .catch((e: RelewiseClientError) => {
+      .catch((e: ProblemDetailsError) => {
         handleRelewiseClientError(e);
-      });;
+      });
   }, [id]);
 
   return (

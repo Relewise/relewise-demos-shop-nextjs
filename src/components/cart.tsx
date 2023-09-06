@@ -1,8 +1,12 @@
 "use client";
 import { BasketItemCountContext } from "@/app/layout";
-import { Basket, BasketItem } from "@/stores/basket";
+import { Basket } from "@/stores/basket";
 import { BasketStore } from "@/stores/basketStore";
+import { ContextStore } from "@/stores/contextStore";
+import { TrackingStore } from "@/stores/trackingStore";
+import renderPrice from "@/util/price";
 import {
+  ProblemDetailsError,
   ProductResult,
   PurchasedWithCurrentCartBuilder,
   PurchasedWithMultipleProductsBuilder
@@ -10,11 +14,8 @@ import {
 import dynamic from "next/dynamic";
 import { useContext, useEffect, useState } from "react";
 import ProductImage from "./product/productImage";
-import { ContextStore } from "@/stores/contextStore";
 import ProductTile from "./product/productTile";
-import renderPrice from "@/util/price";
-import { TrackingStore } from "@/stores/trackingStore";
-import handleRelewiseClientError, { RelewiseClientError } from "@/util/handleError";
+import handleRelewiseClientError from "@/util/handleError";
 
 const Component = () => {
   const basketStore = new BasketStore();
@@ -59,9 +60,9 @@ const Component = () => {
           setRecommendations(result.recommendations ?? []);
         }
       })
-      .catch((e: RelewiseClientError) => {
-        handleRelewiseClientError(e);
-      });;
+        .catch((e: ProblemDetailsError) => {
+          handleRelewiseClientError(e);
+        });
     } else {
       const builder = new PurchasedWithMultipleProductsBuilder(contextStore.getDefaultSettings())
         .setSelectedProductProperties(contextStore.getProductSettings())
@@ -83,9 +84,9 @@ const Component = () => {
           setRecommendations(result.recommendations ?? []);
         }
       })
-      .catch((e: RelewiseClientError) => {
-        handleRelewiseClientError(e);
-      });;
+        .catch((e: ProblemDetailsError) => {
+          handleRelewiseClientError(e);
+        });
     }
   }, [currentBasket.items, currentBasket.items.length, userHasAcceptedTracking]);
 
@@ -122,7 +123,7 @@ const Component = () => {
                       className="h-8 w-8 border bg-white text-center text-xs outline-none"
                       type="number"
                       min="1"
-                      onChange={() => {}}
+                      onChange={() => { }}
                     />
                     <span
                       className="cursor-pointer rounded-r bg-gray-100 py-1 px-3 duration-100 hover:bg-brand-500 hover:text-brand-50"

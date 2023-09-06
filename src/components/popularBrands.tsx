@@ -1,9 +1,10 @@
 "use client";
 import { ContextStore } from "@/stores/contextStore";
-import handleRelewiseClientError, { RelewiseClientError } from "@/util/handleError";
+import handleRelewiseClientError from "@/util/handleError";
 import {
   BrandResult,
-  PopularBrandsRecommendationBuilder
+  PopularBrandsRecommendationBuilder,
+  ProblemDetailsError
 } from "@relewise/client";
 import dynamic from "next/dynamic";
 import Link from "next/link";
@@ -30,9 +31,9 @@ const Component = () => {
       .then((result) => {
         setPopularBrands(result?.recommendations);
       })
-      .catch((e: RelewiseClientError) => {
+      .catch((e: ProblemDetailsError) => {
         handleRelewiseClientError(e);
-      });;
+      });
   }, []);
 
   return (

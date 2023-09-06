@@ -1,12 +1,12 @@
 "use client";
 import { ContextStore } from "@/stores/contextStore";
 import { getCategories } from "@/util/categoryFetcher";
-import { CategoryHierarchyFacetResultCategoryNode } from "@relewise/client";
+import { CategoryHierarchyFacetResultCategoryNode, ProblemDetailsError } from "@relewise/client";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import FlatHeaderCategories from "./flatHeaderCategories";
 import NestedHeaderCategories from "./nestedHeaderCategories";
-import handleRelewiseClientError, { RelewiseClientError } from "@/util/handleError";
+import handleRelewiseClientError from "@/util/handleError";
 
 const Component = () => {
   const [categories, setCategories] = useState<
@@ -25,7 +25,7 @@ const Component = () => {
     const contextStore = new ContextStore();
     getCategories(contextStore)
     .then((result) => setCategories(result))
-    .catch((e: RelewiseClientError) => {
+    .catch((e: ProblemDetailsError) => {
       handleRelewiseClientError(e);
     });
   }, []);
